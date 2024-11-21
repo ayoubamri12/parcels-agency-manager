@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('companies', function (Blueprint $table) {
-            $table->integer('revenue_per_comp');
+        Schema::table('parcels', function (Blueprint $table) {
+            $table->boolean("returned")->nullable();
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('companies', function (Blueprint $table) {
+        Schema::table('parcels', function (Blueprint $table) {
             //
         });
     }

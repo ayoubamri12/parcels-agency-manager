@@ -10,7 +10,15 @@ class Company extends Model
     use HasFactory;
     protected $fillable = ['name','revenue_per_comp'];
     public function magasins(){
-        $this->belongsToMany(Magasin::class , "company_id","id");
+       return $this->belongsToMany(Magasin::class , "company_id","id");
     }
-
+    public function parcels(){
+       return $this->belongsToMany(Parcel::class,"company_id","id");
+    }
+    public function deliveriyman_cities(){
+      return $this->hasMany(DeliverymanCity::class,"company_id","id");
+   }
+   public function commissions(){
+      return $this->hasMany(Commission::class,"company_id","id");
+  }
 }

@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('deliveryman_cities', function (Blueprint $table) {
+        Schema::create('commissions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger("delivery_id");
             $table->unsignedBigInteger("city_id");
             $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
-            $table->foreign('delivery_id')->references('id')->on('deliveries')->onDelete('cascade');
+            $table->unsignedBigInteger("company_id");
+            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('deliveryman_citie');
+        Schema::dropIfExists('commissions');
     }
 };

@@ -1870,7 +1870,7 @@ pre code {
 }
 
 .table-hover tbody tr:hover {
-    background-color: rgba(0, 0, 0, .075)
+    background-color: rgba(61, 200, 246, 50%) !important;
 }
 
 .table-primary,
@@ -2102,7 +2102,7 @@ pre code {
 .table-responsive {
     display: block;
     width: 100%;
-    overflow-x: auto;
+    overflow-x: scroll;
     -webkit-overflow-scrolling: touch;
     -ms-overflow-style: -ms-autohiding-scrollbar
 }

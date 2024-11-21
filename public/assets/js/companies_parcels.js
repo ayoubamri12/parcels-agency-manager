@@ -57,7 +57,7 @@ var table = $('table#example').DataTable({
     responsive: true,
     searching: true,
     ajax: {
-        url: "/api/parcels",
+        url: "/api/parcels_per_companies/"+window.Laravel.companyId,
         type: "GET",
         dataSrc: function (json) {
             return json;
@@ -68,7 +68,7 @@ var table = $('table#example').DataTable({
             d.magasin = $('#magasin-filter').val();
             d.state = $('#state-filter').val();
             d.status = $('#status-filter').val();
-            d.company_id = $('#company-filter').val();
+
             d.delivery = $('#delivery-filter').val();
         }, beforeSend: function () {
             $('#loaderHolder').show();
@@ -82,7 +82,6 @@ var table = $('table#example').DataTable({
         [1, 'asc']
     ],
     "columnDefs": [
-
         { "orderable": false, "targets": 0 } // Disable sorting on the "Status" column
     ],
     paging: true,
@@ -93,21 +92,20 @@ var table = $('table#example').DataTable({
     ],
     pagingType: 'simple_numbers',
     searching: false,
-
     columns: [{
         data: null,
         render: function (data, type, row) {
-            return row.returned == 1 ? ` <i class="fas fa-undo text-danger"></i>` : `<input type="checkbox" value=${row.id} class="row-checkbox">`;
+            return `  <input type="checkbox" value=${row.id} class="row-checkbox">`;
         }
     },
     {
         data: "code",
         render: function (data, type, row) {
             return `           
-                                 ${row.code}
-                                 <p class="badge badge-info"><i class="fa-solid fa-motorcycle"></i>
-                                     ${row.delivery.name} </p>
-                         `
+                                      ${row.code}
+                                      <p class="badge badge-info"><i class="fa-solid fa-motorcycle"></i>
+                                          ${row.delivery.name} </p>
+                              `
 
 
         }
@@ -129,9 +127,9 @@ var table = $('table#example').DataTable({
         data: "phone",
         render: function (data, type, row) {
             return `           
-                          
-                                 <p>${row.phone}</p>
-                         `
+                               
+                                      <p>${row.phone}</p>
+                              `
 
 
         }
@@ -144,8 +142,8 @@ var table = $('table#example').DataTable({
         ,
         render: function (data, type, row) {
             return `            
-                                 ${row.state == 'Payé' ? `<p class="badge badge-success p-1">${row.state}</p>` : ` <p class="badge badge-primary">${row.state}</p>`}       
-                         `
+                                      ${row.state == 'Payé' ? `<p class="badge badge-success p-1">${row.state}</p>` : ` <p class="badge badge-primary">${row.state}</p>`}       
+                              `
         }
     },
     {
@@ -157,7 +155,7 @@ var table = $('table#example').DataTable({
         ${row.status} 
        </p> 
        <br> 
-        <span style="font-size: 12px; color: black">${row.delivery_date}</span>
+        <span style="font-size: 12px; color: black;">${row.delivery_date}</span>
        `
                     : row.status === 'Reporté'
                         ? `<p style="background-color: #ffc107; color: black; padding: 10px; border-radius: 5px; font-size: 12px; display: inline-block;">
@@ -202,8 +200,8 @@ var table = $('table#example').DataTable({
         data: "price",
         render: (data, type, row) => {
             return `
-                         <p>${row.price} DH </p>
-                     `
+                              <p>${row.price} DH </p>
+                          `
         }
     },
     {
@@ -214,20 +212,20 @@ var table = $('table#example').DataTable({
 
 
             return `
-                     <div class="btn-group">
-                        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" id="dropdownMenuButton${row.id}">
-              <i class="fas fa-ellipsis-v"></i>
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${row.id}">
-              <li><a class="dropdown-item" href="#" id='det${row.id}'><i class="fas fa-info-circle"></i> Details</a></li>
-              <li><a class="dropdown-item" href="#"  id='status${row.id}'><i class="fas fa-edit"></i> Modify Status</a></li>
-              <li><a class="dropdown-item" href="#"  id='state${row.id}'><i class="fas fa-edit"></i> Modify State</a></li>
-              <li><a class="dropdown-item" href="/parcels/delete/${row.id}"><i class="fas fa-trash-alt"></i> Delete</a></li>
-            </ul>
-          </div>
-                     </div>
-                     `;
+                          <div class="btn-group">
+                             <div class="dropdown">
+                 <button class="btn btn-secondary dropdown-toggle" type="button" data-toggle="dropdown" id="dropdownMenuButton${row.id}">
+                   <i class="fas fa-ellipsis-v"></i>
+                 </button>
+                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${row.id}">
+                   <li><a class="dropdown-item" href="#" id='det${row.id}'><i class="fas fa-info-circle"></i> Details</a></li>
+                   <li><a class="dropdown-item" href="#"  id='status${row.id}'><i class="fas fa-edit"></i> Modify Status</a></li>
+                   <li><a class="dropdown-item" href="#"  id='state${row.id}'><i class="fas fa-edit"></i> Modify State</a></li>
+                   <li><a class="dropdown-item" href="#" id='del${row.id}'><i class="fas fa-trash-alt"></i> Delete</a></li>
+                 </ul>
+               </div>
+                          </div>
+                          `;
         }
     }
     ],
@@ -238,8 +236,25 @@ var table = $('table#example').DataTable({
                 $(this).append('<span class="sort-icon"></span>');
             });
         });
+        this.api().rows().data().each(function (e) {
+            console.log(e);
 
-        
+            $(`#det${e.id}`).on("click", function () {
+                showModal("details", e)
+                console.log("det");
+
+            })
+            $(`#status${e.id}`).on("click", function () {
+                showModal("modifyStatus", e)
+            })
+            $(`#state${e.id}`).on("click", function () {
+                showModal("modifyState", e)
+            })
+            $(`#del${e.id}`).on("click", function () {
+                showModal("delete", e)
+            })
+
+        });
         // this.api().rows().every(function () {
         //     var row = $(this.node());
         //     var data = this.data();
@@ -262,7 +277,19 @@ var table = $('table#example').DataTable({
 
     },
     drawCallback: async function () {
-        let delivredQ = 0, rev = 0, clearRev = 0,returned = 0,refused=0;
+        $('.row-checkbox').on('click', function () {
+            if ($(".row-checkbox:checked").length > 0) {
+                $('#return').show();
+                $('#return').addClass("return-button")
+            }
+            else {
+                $('#return').hide();
+                $('#return').removeClass("return-button");
+            }
+
+
+        });
+        let delivredQ = 0, rev = 0, clearRev = 0,returned=0,refused=0;
 
         const retrievedCities = await fetch('/api/cities').then(e => e.json());
         const retrievedComps = await fetch('/api/companies_commissions').then(e => e.json());
@@ -308,37 +335,6 @@ var table = $('table#example').DataTable({
         $("#returned").text(returned+ " Parcel")
         $("#refused").text(refused+ " Parcel")
 
-        $('.row-checkbox').on('click', function () {
-            if ($(".row-checkbox:checked").length > 0) {
-                $('#markAsReturned').show();
-                $('#markAsReturned').addClass("return-button")
-            }
-            else {
-                $('#markAsReturned').hide();
-                $('#markAsReturned').removeClass("return-button");
-            }
-
-
-        });
-        this.api().rows().data().each(function (e) {
-            console.log(e);
-
-            $(`#det${e.id}`).on("click", function () {
-                showModal("details", e)
-                console.log("det");
-
-            })
-            $(`#status${e.id}`).on("click", function () {
-                showModal("modifyStatus", e)
-            })
-            $(`#state${e.id}`).on("click", function () {
-                showModal("modifyState", e)
-            })
-            $(`#del${e.id}`).on("click", function () {
-                showModal("delete", e)
-            })
-
-        });
     }
 
 });
@@ -351,7 +347,6 @@ $('#refresh-btn').on('click', function () {
     $('#magasin-filter').val("");
     $('#state-filter').val("");
     $('#status-filter').val("");
-    $('company-filter').val("");
     $('#delivery-filter').val("");
     cb(moment('2024-08-01'), moment())
     $('#magasin-filter').val('');
@@ -361,16 +356,16 @@ $('#refresh-btn').on('click', function () {
 $('#select-all').on('change', function () {
     $('.row-checkbox').prop('checked', this.checked);
     if ($(".row-checkbox:checked").length > 0) {
-        $('#markAsReturned').show();
-        $('#markAsReturned').addClass("return-button")
+        $('#return').show();
+        $('#return').addClass("return-button")
     }
     else {
-        $('#markAsReturned').hide();
-        $('#markAsReturned').removeClass("return-button");
+        $('#return').hide();
+        $('#return').removeClass("return-button");
     }
 
-
 });
+// console.log($('.row-checkbox'))
 const barCtx = document.getElementById('barChart').getContext('2d');
 new Chart(barCtx, {
     type: 'bar',
@@ -467,105 +462,4 @@ new Chart(doughnutCtx, {
     options: {
         responsive: true
     }
-});
-$("button#markAsReturned").click(function () {
-    let ids = [];
-    $(".row-checkbox:checked").each(function () { ids.push(parseInt(this.value)) });
-    console.log(ids);
-    $.ajax({
-        url: '/api/parcels/markAsReturned',
-        type: 'PATCH',
-        data: {
-            _token: '{{ csrf_token() }}',
-            ids: ids
-        },
-        success: function (response) {
-            table.ajax.reload();
-
-            toastr.options = {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": true,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "5000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            };
-            toastr.success("done !!");
-        },
-
-    });
-
-
-})
-document.getElementById("downloadExcel").addEventListener("click", function () {
-    // Define the headers for the Excel file
-    const headers = [["Destinataire", "Telephone", "Ville", "Prix"]];
-
-    // Create a worksheet with only the headers
-    const worksheet = XLSX.utils.aoa_to_sheet(headers);
-    const borderStyle = {
-        top: { style: "thin", color: { rgb: "000000" } }, // Black border
-        bottom: { style: "thin", color: { rgb: "000000" } },
-        left: { style: "thin", color: { rgb: "000000" } },
-        right: { style: "thin", color: { rgb: "000000" } },
-    };
-    // Apply styles to the headers (optional)
-    const headerStyle = {
-        font: { bold: true, color: { rgb: "000000" } }, // Black text
-        alignment: { horizontal: "center", vertical: "center", wrapText: true }, // Centered with text wrapping
-        fill: { fgColor: { rgb: "F28B82" } }, // Light red background
-        border: borderStyle,
-    };
-    headers[0].forEach((_, colIndex) => {
-        const cellAddress = XLSX.utils.encode_cell({ r: 0, c: colIndex }); // Get cell address
-        worksheet[cellAddress].s = headerStyle; // Apply style
-    });
-    const cellStyle = {
-        font: { italic: true, color: { rgb: "0000FF" } }, // Italic blue text
-        alignment: { horizontal: "center", vertical: "center" },
-        border: {
-            top: { style: "bold", color: { rgb: "orange" } }, // Red border
-            right: { style: "bold", color: { rgb: "orange" } }, // Red border
-            bottom: { style: "bold", color: { rgb: "orange" } }, // Red border
-            left: { style: "bold", color: { rgb: "orange" } },
-        },
-    };
-    worksheet['A1'].s = {
-        font: { bold: true, color: { rgb: 'FF0000' } }, // Red bold text
-        fill: { fgColor: { rgb: 'FFFF00' } }, // Yellow background
-    };
-    for (let i = 1; i <= 50; i++) {
-        const cellAddresses = [`A${i}`, `B${i}`, `C${i}`, `D${i}`];
-        cellAddresses.forEach((address) => {
-            if (!worksheet[address]) {
-                worksheet[address] = { v: " " }; // Initialize the cell if it doesn't exist
-            }
-            worksheet[address].s = cellStyle; // Apply the style
-        });
-    }
-    worksheet["!cols"] = [
-        { width: 20 }, // Width for "Destinataire"
-        { width: 15 }, // Width for "Telephone"
-        { width: 12 }, // Width for "Ville"
-        { width: 10 }, // Width for "Prix"
-    ];
-
-    worksheet["!rows"] = [
-        { hpx: 30 }, // Width for "Destinataire"
-    ];
-    // Create a workbook and append the styled worksheet
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Headers Only");
-
-    // Trigger download of the Excel file
-    XLSX.writeFile(workbook, "HeadersOnly.xlsx");
 });

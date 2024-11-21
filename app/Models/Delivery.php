@@ -8,11 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Delivery extends Model
 {
     use HasFactory;
-    protected $fillable = ['name'];
+    protected $fillable = ['name','comission'];
 
-    public function cities()
+    public function deliveriyman_cities()
     {
-        return $this->belongsToMany(City::class, 'deliveryman_cities', 'city_id', 'id');
+        return $this->hasMany(DeliverymanCity::class, 'delivery_id', 'id');
     }
     
     public function parcels()

@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger("delivery_id");
             $table->unsignedBigInteger("city_id");
-            $table->integer("commission");
             $table->unsignedBigInteger('company_id');
+            $table->integer("commission");
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->foreign('city_id')->references('id')->on('cities')->onDelete('cascade');
             $table->foreign('delivery_id')->references('id')->on('deliveries')->onDelete('cascade');
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('deliveryman_citie');
+        Schema::dropIfExists('deliveryman_cities');
     }
 };

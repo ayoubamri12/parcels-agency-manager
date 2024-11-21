@@ -8,13 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class DeliverymanCity extends Model
 {
     use HasFactory;
-    protected $fillable = ["delivery_id", "city_id"];
+    protected $fillable = ["delivery_id", "city_id","company_id","commission"];
     public function deliveries()
     {
-        return $this->hasToMany(Delivery::class, 'delivery_id', 'id');
+        return $this->belongsToMany(Delivery::class,'deliveries', 'id', 'delivery_id');
     }
     public function cities()
     {
-        return $this->hasToMany(City::class, 'city_id', 'id');
+        return $this->belongsToMany(City::class,'cities','id', 'city_id');
+    }
+    public function companies()
+    {
+        return $this->belongsToMany(City::class, 'companies','id', 'company_id');
     }
 }

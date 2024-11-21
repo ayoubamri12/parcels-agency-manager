@@ -22,7 +22,7 @@
                         <span class="text">Home</span>
                     </a>
                 </li>
-               
+
                 <li class="{{ request()->is('Parcels/*') ? 'mainMenu' : '' }}">
                     <a href="#">
                         <i class="icon fa-solid fa-box"></i>
@@ -41,17 +41,21 @@
                             @endauth
                         </li>
                         <li>
-                            <a class="{{ request()->is('Parcels/deliverymen/index') ? 'sub-active' : '' }}"
+                            <a class="{{ request()->is('Parcels/deliverymen/index') || request()->is('Parcels/deliverymen/*') ? 'sub-active' : '' }}"
                                 href="{{ route('deliverymen') }}">
                                 <span class="text">> Per deliveryman</span>
                             </a>
                         </li>
+                        @auth
+                            @if (auth()->user()->type == 'admin')
                         <li class="#">
-                            <a class="{{ request()->is('Parcels/companies/index') ? 'sub-active' : '' }}"
+                            <a class="{{ request()->is('Parcels/companies/index') || request()->is('Parcels/companies/*')  ? 'sub-active' : '' }}"
                                 href="{{ route('companies') }}">
                                 <span class="text">> Per Client</span>
                             </a>
                         </li>
+                        @endif
+                        @endauth
 
                     </ul>
                 </li>
@@ -78,24 +82,28 @@
                 </li>
             </ul>
         </div>
-        <div class="menu">
-            <p class="title">Settings</p>
-            <ul>
-                <li class="{{ request()->routeIs('settings') ? 'mainMenu' : '' }}">
-                    <a href="{{ route('settings') }}">
-                        <i class="icon ph-bold ph-gear"></i>
-                        <span class="text">Settings</span>
-                    </a>
-                </li>
-                <li class="{{ request()->routeIs('insertion') ? 'mainMenu' : '' }}">
-                    <a href="{{ route('insertion') }}">
-                        <i class="fas fa-file-upload"></i>
-                        <span class="text">Data Exporting</span>
-                    </a>
-                </li>
-            </ul>
+        @auth
+            @if (auth()->user()->type == 'admin')
+                <div class="menu">
+                    <p class="title">Settings</p>
+                    <ul>
+                        <li class="{{ request()->routeIs('settings') ? 'mainMenu' : '' }}">
+                            <a href="{{ route('settings') }}">
+                                <i class="icon ph-bold ph-gear"></i>
+                                <span class="text">Settings</span>
+                            </a>
+                        </li>
+                        <li class="{{ request()->routeIs('insertion') ? 'mainMenu' : '' }}">
+                            <a href="{{ route('insertion') }}">
+                                <i class="fas fa-file-upload"></i>
+                                <span class="text">Data Exporting</span>
+                            </a>
+                        </li>
+                    </ul>
 
-        </div>
+                </div>
+            @endif
+        @endauth
         <br>
         <div class="menu">
             <p class="title">Account</p>

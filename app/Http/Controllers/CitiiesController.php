@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class CitiiesController extends Controller
 {
     public function cities(){
-        $cities = City::with("deliveries")->get();
+        $cities = City::with("deliveriyman_cities")->get();
         return response()->json($cities);
         
     }

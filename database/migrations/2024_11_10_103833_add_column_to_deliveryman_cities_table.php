@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('deliveries', function (Blueprint $table) {
-            $table->double("comission");
+        Schema::table('deliveryman_cities', function (Blueprint $table) {
+             
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('deliveries', function (Blueprint $table) {
+        Schema::table('deliveryman_cities', function (Blueprint $table) {
             //
         });
     }

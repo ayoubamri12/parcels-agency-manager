@@ -75,11 +75,11 @@
     }
 
     .modal-overlay {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         width: 100%;
-        height: 100%;
+        height: 100vh;
         z-index: 1000;
         background: rgba(0, 0, 0, 0.5);
         opacity: 0;
@@ -199,6 +199,9 @@
         .card-container {
             gap: 30px;
         }
+        .modal-overlay {
+            height: 100vh;
+        }
     }
 </style>
 <x-layout>
@@ -212,7 +215,7 @@
                         <a href="#" id="{{$dv->id}}" class="cardBtn d-block h-100 w-100" style="text-decoration: none;">
                         @else
                             @if (auth()->user()->type === 'admin' || auth()->user()->delivery_id === $dv->id)
-                                <a href="/" class="d-block h-100 w-100" style="text-decoration: none;">
+                                <a href="{{route("deliverymen.parcels",$dv->id)}}" class="d-block h-100 w-100" style="text-decoration: none;">
                             @else
                                     <a href="#" class="cardBtn d-block h-100 w-100"
                                         style="text-decoration: none;">
