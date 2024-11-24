@@ -18,7 +18,7 @@ class SettingsController extends Controller
         $deliverymen = Delivery::all();
         $companies = Company::all();
         $cities = City::all();
-        return view('admin.settings', compact(["deliverymen", "companies", "cities"]));
+        return view('admin.SettingsContainer', compact(["deliverymen", "companies", "cities"]));
     }
     public function storeDeliveryman(Request $request)
     {

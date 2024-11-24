@@ -57,7 +57,9 @@
                 class="justify-content-start mb-1 p-1">
                 <button id="show-menu" class="btn border-0 bg-light"><i class="fa-solid fa-bars"></i></button>
             </div>
-            {{ $slot }}
+            <div>
+                {{ $slot }}
+            </div>
         </div>
     </div>
 
