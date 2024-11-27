@@ -1,6 +1,6 @@
 
 $(document).ready(function() {
-    var table = $('#table').DataTable({
+    var table1 = $('#table').DataTable({
         responsive: true,
         searching: true,
         "columnDefs": [{
@@ -114,8 +114,7 @@ $(document).ready(function() {
                 ids: ids
             },
             success: function(response) {
-                table.ajax.reload();
-
+                table1.ajax.reload();
                 toastr.options = {
                     "closeButton": true,
                     "debug": false,
@@ -220,7 +219,7 @@ checkboxes.forEach(checkbox => {
 });
 
 // livreur js code :
-var table = $('#tab').DataTable({
+var table2 = $('#tab').DataTable({
     responsive: true,
     searching: true,
     "columnDefs": [{
@@ -342,7 +341,7 @@ var table = $('#tab').DataTable({
                                 .toggle();
                         },
                         success: function() {
-                            table.ajax.reload();
+                            table2.ajax.reload();
 
                             toastr.options = {
                                 "closeButton": true,
