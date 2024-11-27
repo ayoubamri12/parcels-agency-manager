@@ -12,4 +12,16 @@ class CitiiesController extends Controller
         return response()->json($cities);
         
     }
+    public function deleteCity(Request $request){
+        $ids = $request->input("ids");
+
+        $res = City::whereIn('id', $ids)->delete();
+    
+        if ($res) {
+            return response()->json(['message' => 'success'], 200);
+        } else {
+            return response()->json(['message' => 'error'], 411);
+        }
+
+    }
 }

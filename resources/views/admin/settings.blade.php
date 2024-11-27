@@ -219,6 +219,51 @@
     </div>
 </div>
 </div>
+<script>
+    
+function showForm() {
+    const entityType = document.getElementById("entityType").value;
+    const formContainer = document.getElementById("formContainer");
+    const deliverymanForm = document.getElementById("deliverymanForm");
+    const companyForm = document.getElementById("companyForm");
+    const LocationForm = document.getElementById("LocationForm");
+    const magasinForm = document.getElementById("magasinForm");
+
+    // Hide both forms initially
+    deliverymanForm.classList.add("d-none");
+    companyForm.classList.add("d-none");
+    LocationForm.classList.add("d-none");
+    magasinForm.classList.add("d-none");
+
+    // Show appropriate form based on selection
+    if (entityType === "deliveryman") {
+        deliverymanForm.classList.remove("d-none");
+    } else if (entityType === "company") {
+        companyForm.classList.remove("d-none");
+    } else if (entityType === "magasin") {
+        magasinForm.classList.remove("d-none");
+
+    } else {
+        LocationForm.classList.remove("d-none");
+
+    }
+
+    // Display the form container with animation
+    if (entityType) {
+        formContainer.classList.remove("d-none");
+        formContainer.classList.add("fade-in-bounce");
+    } else {
+        formContainer.classList.add("d-none");
+    }
+}
+
+// sessions displaying :
+function toggleDropdown() {
+    const dropdown = document.getElementById('dropdown-menu');
+    dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+
+</script>
 
 
 

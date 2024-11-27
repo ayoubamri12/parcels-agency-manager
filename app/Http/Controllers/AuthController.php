@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
@@ -25,6 +27,13 @@ class AuthController extends Controller
             'error' ,'The provided credentials do not match our records.',
         );
     }
+    public function updatePassword(Request $request, $id) {
+        $user = User::where('delivery_id',$id)->get();
+        $user[0]->password = Hash::make($request->password);
+        $user[0]->save();
+        return response()->json(['message' => 'Password updated successfully']);
+    }
+    
     public function destroy(Request $request)
     {
         Auth::logout();

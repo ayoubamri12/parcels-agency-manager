@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DeliveryController;
+use App\Http\Controllers\DeliverymanCityController;
 use App\Http\Controllers\ParcelsController;
 use App\Http\Controllers\SettingsController;
 use App\Models\Parcels;
@@ -39,4 +40,5 @@ Route::post('/settings/deliveryman/store', [SettingsController::class, 'storeDel
 Route::post('/settings/magasin/store', [SettingsController::class, 'storeMagasin'])->name('settings.storeMagasin');
 Route::post('/settings/company/store', [SettingsController::class, 'storeCompany'])->name('settings.storeCompany');
 Route::post('/settings/city/store', [SettingsController::class, 'storeCity'])->name('settings.storeCity');
+Route::patch("/deliverymencity/merge/{id}", [DeliverymanCityController::class, "merge"]);
 Route::get("/parcels/delete/{id}", [ParcelsController::class, "destroy"])->name("parcel.delete");

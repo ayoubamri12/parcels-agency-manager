@@ -2,8 +2,28 @@
     .holder {
         width: 98%;
         margin: 20px auto;
-        font-family: Arial, sans-serif;
         height: fit-content;
+    }
+
+    .password-cell {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .password-input {
+        flex: 1;
+        margin-right: 5px;
+    }
+
+    .toggle-password.active {
+        color: #007bff;
+        /* Highlight color when active */
+    }
+
+    .edit-password:hover,
+    .toggle-password:hover {
+        color: #007bff;
     }
 
     .top-bar {
@@ -89,17 +109,29 @@
     }
 
     /* Style for the main table */
-    .main-datatable .dataTable th:first-child,.main-datatable .dataTable td:first-child{
-        width: 10%!;
+    .main-datatable .dataTable th:first-child,
+    .main-datatable .dataTable td:first-child {
+        width: 10% !;
 
     }
-    .main-datatable .dataTable thfirst-of-type,.main-datatable .dataTable td:first-of-type{
+
+    .main-datatable .dataTable th:first-of-type,
+    .main-datatable .dataTable td:first-of-type {
         text-align: center;
         border: 2px solid #ddd !important;
         text-justify: center;
         padding: 10px 0;
 
     }
+
+    .main-datatable .dataTable tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    .main-datatable .dataTable tr:nth-child(even) {
+        background-color: whitesmoke;
+    }
+
     .main-datatable .dataTable th:not(:first-of-type),
     .main-datatable .dataTable td:not(:first-of-type) {
         border: 2px solid #ddd !important;
@@ -166,13 +198,14 @@
     }
 
     /* Table Header Styling */
-    .main-datatable .dataTables_wrapper .dataTable thead th {
-        background-color: #f2f2f2 !important;
+    .main-datatable .dataTable thead th {
+        background-color: white !important;
+
         color: #333 !important;
         border-bottom: 2px solid #ddd !important;
         font-weight: bold !important;
         text-align: left !important;
-        padding: 10px 15px !important;
+        padding: 20px 15px !important;
     }
 
     .actions button {
@@ -321,22 +354,23 @@
         padding: 5px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 800px) {
         .holder {
-            width: 95%;
+            width: 80%;
         }
     }
 </style>
 <x-layout>
-    <div id="loaderHolder" style="display: none" class="loading">
-        <p class="loader"></p>
-    </div>
     <div class="holder">
+        <div id="loaderHolder" style="display: none" class="loading">
+            <p class="loader"></p>
+        </div>
         <div class="main-content">
             <h1>Settings <span class="rotate"><i class="icon ph-bold ph-gear"></i></span></h1>
             <div class="tabs">
                 <a class="tab-btn activebtn" onclick="showContent('clients')">General Settings</a>
                 <a class="tab-btn" onclick="showContent('products')">Locations</a>
+                <a class="tab-btn" onclick="showContent('Deliverymen')">Deliverymen</a>
             </div>
             <div class="content show" id="clients-content">
                 @include('admin.settings')
@@ -344,234 +378,32 @@
             <div class="content" id="products-content">
                 @include('admin.locations')
             </div>
+            <div class="content" id="Deliverymen-content">
+                @include('admin.Deliverymenlist')
+            </div>
         </div>
     </div>
 </x-layout>
 <script>
-    function toggleDropdown() {
-        const dropdown = document.getElementById('dropdown-menu');
-        dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-    }
-
     function showContent(type) {
-        const allContents = document.querySelectorAll('.content');
-        const allTabs = document.querySelectorAll('.tab-btn');
+    const allContents = document.querySelectorAll('.content');
+    const allTabs = document.querySelectorAll('.tab-btn');
 
-        // Hide all content sections
-        allContents.forEach(content => content.classList.remove('show'));
+    // Hide all content sections
+    allContents.forEach(content => content.classList.remove('show'));
 
-        // Remove activebtn state from all tabs
-        allTabs.forEach(tab => tab.classList.remove('activebtn'));
+    // Remove activebtn state from all tabs
+    allTabs.forEach(tab => tab.classList.remove('activebtn'));
 
-        // Show selected content
-        const selectedContent = document.getElementById(`${type}-content`);
-        selectedContent.classList.add('show');
+    // Show selected content
+    const selectedContent = document.getElementById(`${type}-content`);
+    selectedContent.classList.add('show');
 
-        // Add activebtn state to the selected tab
-        const selectedTab = document.querySelector(`.tab-btn[onclick="showContent('${type}')"]`);
-        if (selectedTab) {
-            selectedTab.classList.add('activebtn');
-        }
+    // Add activebtn state to the selected tab
+    const selectedTab = document.querySelector(`.tab-btn[onclick="showContent('${type}')"]`);
+    if (selectedTab) {
+        selectedTab.classList.add('activebtn');
     }
+}
 </script>
-<!-- JavaScript for toggling forms and adding animation -->
-<script>
-    $(document).ready(function() {
-        // Form submission event
-        $('#deliverymanForm').on('submit', function(e) {
-            // Prevent form submission for validation
-            e.preventDefault();
-
-            // Clear any previous error messages
-            $('.error').remove();
-
-            // Validation flags
-            let isValid = true;
-
-            // Validate Name (text field)
-            let name = $('input[name="name"]').val();
-            if (name.trim() === '') {
-                isValid = false;
-                $('input[name="name"]').after(
-                    '<div class="error" style="color: red;">Name is required.</div>');
-            }
-
-            // Validate Password (text field)
-            let password = $('input[name="password"]').val();
-            if (password.trim() === '') {
-                isValid = false;
-                $('input[name="password"]').after(
-                    '<div class="error" style="color: red;">Password is required.</div>');
-            }
-
-            // Validate Company Checkboxes (at least one company must be selected)
-            let selectedCompanies = $('input[name="cps[]"]:checked').length;
-            if (selectedCompanies === 0) {
-                isValid = false;
-                $('.checkbox-list').parents(".dropdown").after(
-                    '<div class="error" style="color: red;">Please select at least one company.</div>'
-                );
-            }
-
-            // Validate City Checkboxes (at least one city must be selected)
-            let selectedCities = $('input[name="city[]"]:checked').length;
-            if (selectedCities === 0) {
-                isValid = false;
-                $('.checkbox-list').parents(".dropdown").after(
-                    '<div class="error" style="color: red;">Please select at least one city.</div>');
-            }
-
-            // If form is valid, submit the form
-            if (isValid) {
-                // Submit the form if everything is valid
-                this.submit();
-            }
-        });
-    });
-
-    const checkboxes = document.querySelectorAll('#first input[type="checkbox"]');
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('click', () => {
-            if (checkbox.checked) {
-                console.log($(checkbox).next("input[type=number]"));
-
-                $(checkbox).parent("div").next("div").children("input[type=number]").removeAttr(
-                    "disabled");
-                return
-            }
-            $(checkbox).parent("div").next("div").children("input[type=number]").attr("disabled", true);
-
-        });
-    });
-
-    function showForm() {
-        const entityType = document.getElementById("entityType").value;
-        const formContainer = document.getElementById("formContainer");
-        const deliverymanForm = document.getElementById("deliverymanForm");
-        const companyForm = document.getElementById("companyForm");
-        const LocationForm = document.getElementById("LocationForm");
-        const magasinForm = document.getElementById("magasinForm");
-
-        // Hide both forms initially
-        deliverymanForm.classList.add("d-none");
-        companyForm.classList.add("d-none");
-        LocationForm.classList.add("d-none");
-        magasinForm.classList.add("d-none");
-
-        // Show appropriate form based on selection
-        if (entityType === "deliveryman") {
-            deliverymanForm.classList.remove("d-none");
-        } else if (entityType === "company") {
-            companyForm.classList.remove("d-none");
-        } else if (entityType === "magasin") {
-            magasinForm.classList.remove("d-none");
-
-        } else {
-            LocationForm.classList.remove("d-none");
-
-        }
-
-        // Display the form container with animation
-        if (entityType) {
-            formContainer.classList.remove("d-none");
-            formContainer.classList.add("fade-in-bounce");
-        } else {
-            formContainer.classList.add("d-none");
-        }
-    }
-</script>
-<script>
-    var table = $('#table').DataTable({
-        responsive: true,
-        searching: true,
-        "columnDefs": [
-            { "orderable": false, "targets": 0 } ,// Disable sorting on the first column (index 0)
-            { "orderable": false, "targets": 5 } ,// Disable sorting on the first column (index 0)
-        ],
-        ajax: {
-            url: "/api/cities",
-            type: "GET",
-            dataSrc: "",
-            beforeSend: function() {
-                $('#loaderHolder').show();
-            },
-            complete: function() {
-                $('#loaderHolder').hide();
-            },
-        },
-       
-        columns: [{
-                data: null,
-                render: (data) => `<input type="checkbox" value="${data.id}" class="row-checkbox">`
-            },
-            {
-                data: 'id',
-                className: "alignement"
-            },
-            {
-                data: 'city'
-            },
-            {
-                data: 'reg_local'
-            },
-            {
-                data: "deliveryman_cities",
-                render: (data, type, row) => {
-                    return `${
-                        row.deliveriyman_cities.length
-                    }`
-
-                }
-            },
-            {
-                data: 'id',
-                render: function(data, type, row) {
-                    let parcel = JSON.stringify(
-                        row
-                        ); // You might not need this line, unless you're doing something with the parcel data
-
-                    return `
-            <div class="btn-group">
-                <div class="dropdown">
-                    <button class="btn  action-btn" type="button" data-toggle="dropdown" id="dropdownMenuButton${row.id}">
-                        <i class="fas fa-ellipsis-v"></i>
-                    </button>
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton${row.id}">
-                        <li><a class="dropdown-item action-btn" href="#" id='det${row.id}'><i class="fas fa-info-circle"></i> Details</a></li>
-                        <li><a class="dropdown-item action-btn" href="#" id='status${row.id}'><i class="fas fa-edit"></i> Modify Status</a></li>
-                        <li><a class="dropdown-item action-btn" href="#" id='state${row.id}'><i class="fas fa-edit"></i> Modify State</a></li>
-                        <li><a class="dropdown-item action-btn" href="/parcels/delete/${row.id}"><i class="fas fa-trash-alt"></i> Delete</a></li>
-                    </ul>
-                </div>
-            </div>
-        `;
-                }
-            }
-        ],
-        paging: true,
-        pageLength: 10,
-        lengthMenu: [10, 25, 50, -1],
-        pagingType: 'simple_numbers',
-        initComplete: function() {
-            $(".dataTables_filter input").addClass("form-control");
-            this.api().columns().every(function () {
-            var column = this;
-            $('td', column.header()).each(function () {
-                $(this).append('<span class="sort-icon"></span>');
-            });
-        });
-        },
-        drawCallback: function() {
-            // Handle checkbox display
-            $('.row-checkbox').on('change', function() {
-                $('#delete-btn').toggle($('.row-checkbox:checked').length > 0);
-            });
-        },
-    });
-
-    // Select-all functionality
-    $('#select-all').on('change', function() {
-        $('.row-checkbox').prop('checked', this.checked);
-        $('#delete-btn').toggle(this.checked);
-    });
-</script>
+<script src="{{asset('/assets/js/settings.js')}}"></script>
