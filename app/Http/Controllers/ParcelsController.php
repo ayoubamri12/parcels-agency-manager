@@ -86,7 +86,7 @@ class ParcelsController extends Controller
         $parcel->status = "en cours de livraison";
         $parcel->price = $req->price;
         $parcel->company_id = $req->cps;
-        $parcel->delivery_id = $req->dev;
+        $parcel->delivery_id = $req->id ?? $req->dev;
         $parcel->company_name = strtoupper($req->magasin);
         // $parcel->qr_code = $qrCodePath;
         // $parcel->adress = $req->adress;

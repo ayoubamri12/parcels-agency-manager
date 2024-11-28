@@ -421,7 +421,7 @@
             <div class="main-datatable table-responsive p-4">
                 @if (auth()->user()->type == 'admin')
                     <div class="d-flex justify-content-end  my-1 mx-auto">
-                        <a href="{{ route('admin.addParcel') }}" class="btn"
+                        <a href="{{ route('admin.addParcel',request()->id) }}" class="btn"
                             style="color: white;background-color: orange; cursor: pointer;">Add Parcels</a>
                         <button class="mx-3" id="return" style="display: none;">
                             <i class="fas fa-undo"></i>

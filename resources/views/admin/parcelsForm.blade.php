@@ -56,7 +56,8 @@
 
         <nav aria-label="breadcrumb w-100">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route("parcels")}}"><i class="icon fa-solid fa-box"></i> Colis</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('parcels') }}"><i class="icon fa-solid fa-box"></i>
+                        Colis</a></li>
                 <li class="breadcrumb-item active" aria-bs-current="page"><a href="">create</a></li>
             </ol>
         </nav>
@@ -91,93 +92,97 @@
             </h3>
         </div>
         <div class="card-body">
-            <form action="{{ route('parcel.store') }}" method="POST" id="parcel-form">
-                <!-- 2 column grid layout with text inputs for the first and last names -->
-                @csrf
-                <div class="row mb-4">
+            @if (request()->id)
+                <form action="{{ route('parcel.store', request()->id) }}" method="POST" id="parcel-form">
+            @else
+                <form action="{{ route('parcel.store') }}" method="POST" id="parcel-form">
+            @endif
+            <!-- 2 column grid layout with text inputs for the first and last names -->
+            @csrf
+            <div class="row mb-4">
 
-                    <div class="col">
-                        <div class="form-outline">
+                <div class="col">
+                    <div class="form-outline">
 
-                            <select name="magasin" id="magasin">
-                                <option value="">Select</option>
-                                @foreach ($mgs as $mg)
-                                <option value="{{$mg->magasin}}">{{$mg->magasin}}</option>
-                                    
-                                @endforeach
-                            </select>
-                            <label class="form-label" for="form6Example2">Magasin</label>
-                            <div id="magasin-error" class="invalid-feedback"></div>
-                        </div>
-                    </div>
-                </div>
-            
-                <!-- Text input -->
-                <div class="form-outline mb-4">
-                    <input type="text" name="phone_number" id="phone" class="form-control" />
-                    <label class="form-label" for="phone">Telephone</label>
-                    <div id="phone-error" class="invalid-feedback"></div>
-                </div>
-
-                <!-- Text input -->
-                <div class="form-outline mb-4">
-                    <input type="text" name="Name" id="clientName" class="form-control" />
-                    <label class="form-label" for="clientName">Destinataire</label>
-                    <div id="clientName-error" class="invalid-feedback"></div>
-                </div>
-    <!-- Number input -->
-    <div class="form-outline mb-4">
-        <div class="row d-flex my-2 align-items-center justify-content-around">
-            <div class="col-md-4 col-12 mb-2 mb-md-0">
-                <div class="dropdown mb-2">
-                    <button type="button" class="btn btn-light px-4 border">Delivering Company</button>
-                    <div class="dropdown-content">
-                        <div id="first" class=".checkbox-list checkbox-list2">
-                            @foreach ($companies as $c)
-                                <label>
-                                    <div class="col-12">
-                                        <input type="radio" name="cps"
-                                            value="{{ $c->id }}">{{ $c->name }}
-                                    </div>
-
-                                </label>
+                        <select name="magasin" id="magasin" class="form-control">
+                            <option value="">Select</option>
+                            @foreach ($mgs as $mg)
+                                <option value="{{ $mg->magasin }}">{{ $mg->magasin }}</option>
                             @endforeach
-                        </div>
+                        </select>
+                        <label class="form-label" for="magasin">Magasin</label>
+                        <div id="magasin-error" class="invalid-feedback"></div>
                     </div>
                 </div>
-                <!-- Error message for company selection -->
             </div>
 
-            <!-- Covered Locations Dropdown with Checkboxes -->
-            <div class="col-md-4 col-12 mb-2 mb-md-0">
-                <div class="dropdown">
-                    <button type="button" class="btn btn-light px-4 border">Destination</button>
-                    <div style="width: 180px;" class="dropdown-content">
-                        <div class=".checkbox-list checkbox-list1">
-                            @foreach ($cities as $c)
-                                <label>
-                                    <div class="col-12">
-                                        <input type="radio" name="city"
-                                            value="{{$c->city }}">{{ $c->city }}
-                                    </div>
-                                </label>
-                            @endforeach
+            <!-- Text input -->
+            <div class="form-outline mb-4">
+                <input type="text" name="phone_number" id="phone" class="form-control" />
+                <label class="form-label" for="phone">Telephone</label>
+                <div id="phone-error" class="invalid-feedback"></div>
+            </div>
+
+            <!-- Text input -->
+            <div class="form-outline mb-4">
+                <input type="text" name="Name" id="clientName" class="form-control" />
+                <label class="form-label" for="clientName">Destinataire</label>
+                <div id="clientName-error" class="invalid-feedback"></div>
+            </div>
+            <!-- Number input -->
+            <div class="form-outline mb-4">
+                <div class="row d-flex my-2 align-items-center justify-content-around">
+                    <div class="col-md-4 col-12 mb-2 mb-md-0">
+                        <div class="dropdown mb-2">
+                            <button type="button" class="btn btn-light px-4 border">Delivering Company</button>
+                            <div class="dropdown-content">
+                                <div id="first" class=".checkbox-list checkbox-list2">
+                                    @foreach ($companies as $c)
+                                        <label>
+                                            <div class="col-12">
+                                                <input type="radio" name="cps"
+                                                    value="{{ $c->id }}">{{ $c->name }}
+                                            </div>
+
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
                         </div>
+                        <!-- Error message for company selection -->
+                    </div>
+
+                    <!-- Covered Locations Dropdown with Checkboxes -->
+                    <div class="col-md-4 col-12 mb-2 mb-md-0">
+                        <div class="dropdown">
+                            <button type="button" class="btn btn-light px-4 border">Destination</button>
+                            <div style="width: 180px;" class="dropdown-content">
+                                <div class=".checkbox-list checkbox-list1">
+                                    @foreach ($cities as $c)
+                                        <label>
+                                            <div class="col-12">
+                                                <input type="radio" name="city"
+                                                    value="{{ $c->city }}">{{ $c->city }}
+                                            </div>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Error message for city selection -->
                     </div>
                 </div>
-                <!-- Error message for city selection -->
             </div>
-        </div>
-    </div>
-                <!-- Email input -->
-                <div class="row mb-4">
-                    <div class="col">
-                        <div class="form-outline mb-4">
-                            <input type="number" name="price" id="price" class="form-control" />
-                            <label class="form-label" for="price">Prix</label>
-                            <div id="price-error" class="invalid-feedback"></div>
-                        </div>
+            <!-- Email input -->
+            <div class="row mb-4">
+                <div class="col">
+                    <div class="form-outline mb-4">
+                        <input type="number" name="price" id="price" class="form-control" />
+                        <label class="form-label" for="price">Prix</label>
+                        <div id="price-error" class="invalid-feedback"></div>
                     </div>
+                </div>
+                @if (!request()->id)
                     <div class="col-md-4 col-12 mb-2 mb-md-0">
                         <div class="dropdown mb-2">
                             <button type="button" class="btn btn-light px-4 border">Deliverymen</button>
@@ -197,8 +202,9 @@
                         </div>
                         <!-- Error message for company selection -->
                     </div>
+                @endif
 
-                    <!-- <div class="col">
+                <!-- <div class="col">
                         <div class="form-outline mb-4">
                             <input type="text" name="adress" id="adress" class="form-control"  />
                             <label class="form-label" for="adress">Adresse</label>
@@ -207,11 +213,11 @@
         
                     </div> -->
 
-                </div>
+            </div>
 
 
 
-                {{-- <div class="">
+            {{-- <div class="">
                     <div class="form-outline mb-4">
                         <input type="checkbox" name="accessable" id="accessable" value="unaccessible" /> Interdit
                         d&apos;ouvrir le colis
@@ -224,9 +230,9 @@
                     </div>
                 </div> --}}
 
-                <!-- Submit button -->
-                <button type="submit" style="background-color: orange; cursor: pointer;color:white;"
-                    class="btn btn-block mb-4">Add</button>
+            <!-- Submit button -->
+            <button type="submit" style="background-color: orange; cursor: pointer;color:white;"
+                class="btn btn-block mb-4">Add</button>
             </form>
         </div>
     </div>
@@ -238,8 +244,8 @@
             $(this).next(".dropdown-content").toggleClass("show")
             console.log(this);
         });
-       
-        $('#parcel-form').submit(function(event) {
+
+        $('.parcel-form').submit(function(event) {
             event.preventDefault(); // Prevent the form from submitting normally
 
             // Clear any previous errors
@@ -270,13 +276,14 @@
 
             let selectedCompany = $('input[name="cps"]:checked');
             console.log();
-            
+
             if (!selectedCompany.val()) {
                 isValid = false;
                 $('.checkbox-list1').parents(".dropdown").after(
                     '<div class="error" style="color: red;">Please select at least one City.</div>'
                 );
             }
+            if(!@json(request()->id)){
             let selectedDeliveryman = $('input[name="dev"]:checked');
             if (!selectedDeliveryman.val()) {
                 isValid = false;
@@ -284,12 +291,14 @@
                     '<div class="error" style="color: red;">Please select at least one Deliveryman.</div>'
                 );
             }
+        }
             // Validate City Checkboxes (at least one city must be selected)
             let selectedCity = $('input[name="city"]:checked');
             if (!selectedCity.val()) {
                 isValid = false;
                 $('.checkbox-list2').parents(".dropdown").after(
-                    '<div class="error" style="color: red;">Please select at least one company.</div>');
+                    '<div class="error" style="color: red;">Please select at least one company.</div>'
+                    );
             }
             if (isValid) {
                 // All fields are filled, submit the form

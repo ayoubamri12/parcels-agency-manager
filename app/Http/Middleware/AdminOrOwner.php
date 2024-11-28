@@ -21,17 +21,15 @@ class AdminOrOwner
         $user = Auth::user();
 
         // Check if the user is an admin
-        if ($user->role === 'admin') {
-            // Allow access if the user is an admin
-            return $next($request);
+        if($user){
+                // Allow access if the user is an admin
+                return $next($request);
+    
         }
 
-        // Check if the user is the owner of the resource by matching the user ID in the route parameters
-        if ($user->id == $request->route('id')) {
-            return $next($request);
-        }
-
-        // Deny access if neither condition is met
-        return redirect('/login');
+       else{
+         // Deny access if neither condition is met
+         return redirect('/login');
+       }
     }
 }
