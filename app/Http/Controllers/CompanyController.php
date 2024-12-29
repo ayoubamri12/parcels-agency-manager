@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 class CompanyController extends Controller
 {
     public function index(){
-        $cmps = Company::all();
+        $cmps = Company::where('other',0)->get();
         return view("common.companies",compact("cmps"));
     }
 

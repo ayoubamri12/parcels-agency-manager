@@ -239,6 +239,10 @@
             setTimeout(() => {
                 toast.remove();
             }, 3500);
+           
+    document.getElementById("sub").disabled=false
+
+
         
     </script>
     @endif
@@ -264,7 +268,7 @@
                     <input type="password" name="password"  placeholder="Password">
                     <i class="fas fa-key input-icon"></i>
                 </div>
-                <button type="submit">Login</button>
+                <button id="sub" type="submit">Login</button>
             </form>
 
             <!-- Login Button -->
@@ -272,3 +276,11 @@
     </div>
 </x-layout>
 
+<script>
+   
+    document.getElementById("sub").onclick = (e)=>{
+        $("form").submit();
+        e.target.disabled=true
+    };
+
+</script>

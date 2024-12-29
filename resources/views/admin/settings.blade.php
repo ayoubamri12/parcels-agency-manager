@@ -70,7 +70,7 @@
                     <div class="row d-flex my-2 align-items-center justify-content-around">
                         <div class="col-md-4 col-12 mb-2 mb-md-0">
                             <div class="dropdown mb-2">
-                                <button class="btn btn-light px-4 border">Delivering Company</button>
+                                <button type="button" class="btn btn-light px-4 border">Delivering Company</button>
                                 <div class="dropdown-content">
                                     <div id="first" class="checkbox-list">
                                         @foreach ($companies as $c)
@@ -94,7 +94,7 @@
                         <!-- Covered Locations Dropdown with Checkboxes -->
                         <div class="col-md-4 col-12 mb-2 mb-md-0">
                             <div class="dropdown">
-                                <button class="btn btn-light px-4 border">Covered Location</button>
+                                <button type="button" class="btn btn-light px-4 border">Covered Location</button>
                                 <div style="width: 180px;" class="dropdown-content">
                                     <div class="checkbox-list">
                                         @foreach ($cities as $c)
@@ -153,7 +153,7 @@
                         <input type="text" name="location" placeholder="Location" class="form-control" required>
                     </div>
 
-                    <div class="col-md-4 col-12 mb-2 mb-md-0  d-flex  align-items-center justify-content-around">
+                    <div id="pr" class="col-md-4 col-12 mb-2 mb-md-0  d-flex  align-items-center justify-content-around">
                         <div>
                             <input type="radio" id="local"
                                 style="background-color: orange;color: orange; margin: 0;" name="local_reg"
@@ -183,7 +183,7 @@
                     </div>
                     <div class="col-md-6 col-12 mb-2 mb-md-0">
                         <div class="dropdown" style="width:100%;">
-                            <button class="btn btn-light px-4 border w-100">Covered Location</button>
+                            <button type="button" class="btn btn-light px-4 border w-100">Covered Location</button>
                             <div style="width: 180px;" class="dropdown-content">
                                 <div class="checkbox-list">
                                     @foreach ($cities as $c)

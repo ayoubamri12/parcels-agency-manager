@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta http-equiv="X-UA-Compatible" name="{{ csrf_token() }}" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" href="{{ asset('/images/aloo-salhi-logo-new.png') }}">
     <link rel="stylesheet" href="{{ asset('/assets/css/bootstrap.min.css') }}">
@@ -67,7 +67,8 @@
 </body>
 
 <script>
-    $(".menu > ul > li").click(function(e) {
+$(function(){
+        $(".menu > ul > li").click(function(e) {
         // remove active from already active
         $(this).siblings().removeClass("active");
         // add active to clicked
@@ -83,6 +84,7 @@
     $(".menu-btn").click(function() {
         $(".sidebar").toggleClass("active");
         $(".containercss").toggleClass("actived");
+        $(".nav").toggleClass("active");
     });
     $(document).ready(function() {
         checkScreenSize();
@@ -102,15 +104,17 @@
             $(".sidebar").removeClass("active");
             $(".containercss").removeClass("actived");
             $(".containercss").removeClass("notactived");
-
-            if (windowWidth < 800)
-                $(".sidebar").addClass("smallScreen");
+$(".nav").addClass("active");
+            if (windowWidth <= 800){
+                $(".sidebar").addClass("smallScreen")
+                $(".nav").removeClass("active");
+            };
             if (windowWidth <= 500) {
                 $(".sidebar").addClass("active");
                 $(".containercss").addClass("notactived");
                 $(".menu-btn").hide()
                 $(".sidebar").addClass("hide")
-
+                 $(".nav").removeClass("active");
                 $("#menu-holder").css({
                     display: "flex",
                 })
@@ -126,6 +130,7 @@
         })
 
     });
+})
 </script>
 
 </html>

@@ -16,7 +16,7 @@ class SettingsController extends Controller
     public function index()
     {
         $deliverymen = Delivery::all();
-        $companies = Company::all();
+        $companies = Company::where('name','!=','OTHER')->get();
         $cities = City::all();
         return view('admin.SettingsContainer', compact(["deliverymen", "companies", "cities"]));
     }
@@ -44,15 +44,61 @@ class SettingsController extends Controller
     }
     public function storeCompany(Request $request)
     {
-        $company = Company::create(['name' => strtoupper($request->name)]);
-        foreach ($request->input("city") as $c) {
-            $city = City::find($c);
-            $commission = $request->input("reg_commission");
-            if ($city->reg_local === "LOCAL")
-                $commission = $request->input("local_commission");
-            Commission::create(["city_id" => $c, "company_id" => $company->id, "commission" => $commission]);
+        $cities = $request->input('city') ?? $request->input('data.city');
+    $name = $request->input('name') ?? $request->input('data.name');
+    $isOther = $request->query('other') ? 1 : 0;
+$company="";
+    // Create the company
+   if(!is_numeric($name)){
+        $company = Company::create([
+        'name' => strtoupper($name),
+        'other' => $isOther
+    ]);
+   }else{
+       $company = Company::find($name);
+   }
+
+    // Loop through cities and add commissions
+    foreach ($cities as $cityId) {
+        $city = City::find($cityId);
+         if(!is_numeric($name)){
+        // Determine commission
+        $commission = $request->input('reg_commission') ?? $request->input('data.commission');
+        if ($city->reg_local === "LOCAL") {
+            $commission = $request->input('local_commission') ?? $request->input('data.commission');
         }
-        return back()->with('success', 'New Company has been added successfully.');
+        
+        // Create commission record
+        Commission::create([
+            'city_id' => $cityId,
+            'company_id' => $company->id,
+            'commission' => $commission
+        ]);
+         }
+    }
+
+    // If 'other' is set, create DeliverymanCity record
+    if ($isOther) {
+        DeliverymanCity::create([
+            'delivery_id' => $request->input('data.id'),
+            'city_id' => $request->input('data.city')[0],
+            'company_id' => $company->id,
+            'commission' => $request->input('data.commissionlv')
+        ]);
+        $com =  Commission::where("'city_id", $request->input('data.city')[0])->where("company_id",$company->id)->get();
+        if(!$com){
+            Commission::create([
+            'city_id' =>  $request->input('data.city')[0],
+            'company_id' => $company->id,
+            'commission' => $request->input('data.commission')
+        ]);
+
+        }
+        return response()->json($company);
+    }
+
+    // Return back with success message
+    return back()->with('success', 'New Company has been added successfully.');
     }
 
     public function storeMagasin(Request $request)

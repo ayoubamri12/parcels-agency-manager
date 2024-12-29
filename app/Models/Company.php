@@ -8,13 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class Company extends Model
 {
     use HasFactory;
-    protected $fillable = ['name','revenue_per_comp'];
+    protected $fillable = ['name','revenue_per_comp','other'];
     public function magasins(){
        return $this->belongsToMany(Magasin::class , "company_id","id");
     }
     public function parcels(){
        return $this->belongsToMany(Parcel::class,"company_id","id");
     }
+    public function localParcels(){
+      return $this->belongsToMany(Parcel::class,"company_id","id");
+   }
     public function deliveriyman_cities(){
       return $this->hasMany(DeliverymanCity::class,"company_id","id");
    }

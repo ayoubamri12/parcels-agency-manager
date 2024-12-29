@@ -23,14 +23,14 @@
                                 
                             @endforeach
                           </select>
-                          <div class="dropdown mb-2">
-                            <button class="btn btn-light px-4 border">Delivering Company</button>
+                          <div class="dropdown-assign mb-2">
+                            <button type="button" class="btn btn-light px-4 border">Delivering Company</button>
                             <div class="dropdown-content">
-                                <div id="first" class="checkbox-list">
+                                <div id="first" class="checkbox-list1">
                                     @foreach ($companies as $c)
-                                        <label>
+                                        <label class="row">
                                             <div class="col-3">
-                                                <input type="checkbox" required name="cps[]"
+                                                <input type="checkbox"  name="cps[]"
                                                     value="{{ $c->id }}">{{ $c->name }}
                                             </div>
                                             <div class="col-7">
@@ -44,7 +44,7 @@
                         </div>
                         </div>
                         
-                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                        <button type="submit" class="btn btn-primary">Save</button>
                 
                       </form>
                 </div>
@@ -55,13 +55,13 @@
         </div>
     </div>
     <h1>Locations</h1>
-    <div class="filters">
+    {{-- <div class="filters">
 
         <button id="delete-btn"  class="delete-btn">
             <i class="fas fa-trash"></i>
         </button>
 
-    </div>
+    </div> --}}
     <div class="main-datatable table-responsive" style="width: 100%; height: fit-content;">
         <table class="table table-hover cust-datatable dataTable " id="table" style="width: 100%">
             <thead>
@@ -79,6 +79,12 @@
             </tbody>
         </table>
     </div>
-  
 </div>
+<script>
+     $(".dropdown-assign .btn").on("click", function(e) {
+            $(this).next(".dropdown-assign .dropdown-content").toggleClass("show")
+            console.log( $(this).next(".dropdown-assign .dropdown-content"));
+        });
+   
+</script>
 

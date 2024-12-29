@@ -36,7 +36,7 @@ function cb(st, ed) {
 }
 
 $('#reportrange').daterangepicker({
-    startDate: moment('2024-08-01'),
+    startDate: moment(),
     endDate: moment(),
     ranges: {
 
@@ -44,7 +44,7 @@ $('#reportrange').daterangepicker({
         'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
         'Last 7 Days': [moment().subtract(6, 'days'), moment()],
         'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-        'This Month': [moment().startOf('month'), , moment().endOf('month')],
+        'This Month': [moment().startOf('month'), moment().endOf('month')],
         'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
         'This Year': [moment().startOf('year'), moment()],
         'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
@@ -57,7 +57,7 @@ var table = $('table#example').DataTable({
     responsive: true,
     searching: true,
     ajax: {
-        url: "/api/parcels_per_companies/"+window.Laravel.companyId,
+        url: "/api/parcels_per_companies/" +window.Laravel.companyId,
         type: "GET",
         dataSrc: function (json) {
             return json;
@@ -68,7 +68,9 @@ var table = $('table#example').DataTable({
             d.magasin = $('#magasin-filter').val();
             d.state = $('#state-filter').val();
             d.status = $('#status-filter').val();
-
+            d.delivery_date =  $('#delivered-today-filter').is(':checked') 
+            ? $('#delivered-today-filter').val() 
+            : null;
             d.delivery = $('#delivery-filter').val();
         }, beforeSend: function () {
             $('#loaderHolder').show();
@@ -91,7 +93,7 @@ var table = $('table#example').DataTable({
         [10, 25, 50, 'All']
     ],
     pagingType: 'simple_numbers',
-    searching: false,
+    
     columns: [{
         data: null,
         render: function (data, type, row) {
@@ -150,46 +152,58 @@ var table = $('table#example').DataTable({
         data: 'status'
         ,
         render: function (data, type, row) {
-            return `${row.status === 'Livré'
-                    ? `<p style="background-color: #28a745; color: white; padding: 10px; border-radius: 5px; font-size: 12px; display: inline-block;">
+            return`${row.status === 'Livré'
+    ? `<p style="background-color: #28a745; color: white; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; display: inline-block; text-align: center; min-width: 100px;">
         ${row.status} 
        </p> 
        <br> 
-        <span style="font-size: 12px; color: black;">${row.delivery_date}</span>
+        <span style="font-size: 12px; color: #343a40;">${new Date(row.delivery_date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</span>
        `
-                    : row.status === 'Reporté'
-                        ? `<p style="background-color: #ffc107; color: black; padding: 10px; border-radius: 5px; font-size: 12px; display: inline-block;">
+    : row.status === 'Reporté'
+        ? `<p style="background-color: #ffc107; color: #343a40; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; display: inline-block; text-align: center; min-width: 100px;">
         ${row.status} 
        </p> 
        <br> 
-        <span style="font-size: 12px; color: black;">Comment: ${row.comment}</span>
+        <span style="font-size: 12px; color: #343a40;">Comment: ${row.comment}</span>
        `
-                        : row.status === 'Refusé'
-                            ? `<p style="background-color: #dc3545; color: white; padding: 10px; border-radius: 5px; font-size: 12px; display: inline-block;">
+        : row.status === 'Refusé'
+            ? `<p style="background-color: #dc3545; color: white; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; display: inline-block; text-align: center; min-width: 100px;">
         ${row.status} 
        </p>
        <br> 
-        <span style="font-size: 12px; color: black;">Comment: ${row.comment}</span>
+        <span style="font-size: 12px; color: #343a40;">Comment: ${row.comment}</span>
        `
-                            : row.status === 'Annulé'
-                                ? `<p style="background-color: #6c757d; color: white; padding: 10px; border-radius: 5px; font-size: 12px; display: inline-block;">
+            : row.status === 'Annulé'
+                ? `<p style="background-color: red; color: white; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; display: inline-block; text-align: center; min-width: 100px;">
         ${row.status} 
        </p>
        <br> 
-        <span style="font-size: 12px; color: black;">Comment: ${row.comment}</span>
+        <span style="font-size: 12px; color: #343a40;">Comment: ${row.comment}</span>
        `
-                                : row.status === 'En voyage'
-                                    ? `<p style="background-color: #17a2b8; color: white; padding: 10px; border-radius: 5px; font-size: 12px; display: inline-block;">
+                : row.status === 'En voyage'
+                    ? `<p style="background-color: #17a2b8; color: white; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; display: inline-block; text-align: center; min-width: 100px;">
         ${row.status}
        </p>`
-                                    : row.status === 'Pas de reponse'
-                                        ? `<p style="background-color: #ff6347; color: white; padding: 10px; border-radius: 5px; font-size: 12px; display: inline-block;">
+                    : row.status === 'Pas de reponse'
+                        ? `<p style="background-color: orange; color: black; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; display: inline-block; text-align: center; min-width: 100px;">
         ${row.status}
        </p>`
-                                        : `<p style="background-color: #6c757d; color: white; padding: 10px; border-radius: 5px; font-size: 12px; display: inline-block;">
+                        : row.status === 'Injoignable'
+                            ? `<p style="background-color: #6f42c1; color: white; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; display: inline-block; text-align: center; min-width: 100px;">
+        ${row.status}
+       </p>`
+                            : row.status === 'Numéro Incorrect'
+                                ? `<p style="background-color: #d63384; color: white; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; display: inline-block; text-align: center; min-width: 100px;">
+        ${row.status}
+       </p>`
+                                : row.status === 'Hors Zone'
+                                    ? `<p style="background-color: #fd7e14; color: white; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; display: inline-block; text-align: center; min-width: 100px;">
+        ${row.status}
+       </p>`
+                                    : `<p style="background-color: orange; color: black; padding: 8px 12px; border-radius: 12px; font-size: 14px; font-weight: bold; display: inline-block; text-align: center; min-width: 100px;">
        ${row.status}
        </p>`
-                }`
+}`
 
         }
     },
@@ -221,7 +235,8 @@ var table = $('table#example').DataTable({
                    <li><a class="dropdown-item" href="#" id='det${row.id}'><i class="fas fa-info-circle"></i> Details</a></li>
                    <li><a class="dropdown-item" href="#"  id='status${row.id}'><i class="fas fa-edit"></i> Modify Status</a></li>
                    <li><a class="dropdown-item" href="#"  id='state${row.id}'><i class="fas fa-edit"></i> Modify State</a></li>
-                   <li><a class="dropdown-item" href="#" id='del${row.id}'><i class="fas fa-trash-alt"></i> Delete</a></li>
+                  <li><a class="dropdown-item" href="/parcels/delete/${row.id}"><i class="fas fa-trash-alt"></i> Delete</a></li>
+
                  </ul>
                </div>
                           </div>
@@ -289,27 +304,27 @@ var table = $('table#example').DataTable({
 
 
         });
-        let delivredQ = 0, rev = 0, clearRev = 0,returned=0,refused=0;
+        let delivredQ = 0, rev = 0, clearRev = 0, returned = 0, refused = 0;
 
         const retrievedCities = await fetch('/api/cities').then(e => e.json());
         const retrievedComps = await fetch('/api/companies_commissions').then(e => e.json());
         console.log(retrievedComps);
 
         this.api().rows({ search: 'applied' }).data().map(function (e, i) {
-            if (e.returned == 1){
+            if (e.returned == 1) {
                 returned++
             }
-            if (e.status == "Refusé" || e.status == "Annulé"){
+            if (e.status == "Refusé" || e.status == "Annulé") {
                 refused++
             }
             if (e.status == "Livré") {
                 let city = retrievedCities.find(c => {
-                    return c => c.city == e.city
+                    return  c.city == e.city
                 });
                 // console.log(city.deliveriyman_cities);
 
                 let deliveryCom = city.deliveriyman_cities.find(dc => {
-                    return dc => dc.company_id == e.company_id
+                    return  dc.company_id == e.company_id
                 });
                 // console.log(deliveryCom);
 
@@ -332,8 +347,8 @@ var table = $('table#example').DataTable({
         $("#totalRevenue").text(rev + " DH")
         $("#clearRevenue").text(clearRev + " DH")
         $("#clearRevenue").text(clearRev + " DH")
-        $("#returned").text(returned+ " Parcel")
-        $("#refused").text(refused+ " Parcel")
+        $("#returned").text(returned + " Parcel")
+        $("#refused").text(refused + " Parcel")
 
     }
 
@@ -341,7 +356,24 @@ var table = $('table#example').DataTable({
 $('#filter-btn').on('click', function () {
     table.ajax.reload();
 });
+$('#delivered-today-filter').on('click', function () {
+    if ($('#delivered-today-filter').is(':checked')) {
+        // Get today's date in "YYYY-MM-DD" format
+        const today = new Date();
+        const formattedDate = today.toISOString().split('T')[0];
 
+        // Set the value of the checkbox to today's date
+        $('#delivered-today-filter').val(formattedDate);
+
+        // Reload the DataTable with the filter applied
+        table.ajax.reload();
+    }else{
+        $('#delivered-today-filter').val("");
+
+        // Reload the DataTable with the filter applied
+        table.ajax.reload();
+    }
+});
 $('#refresh-btn').on('click', function () {
     $('#code-filter').val('');
     $('#magasin-filter').val("");

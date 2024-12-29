@@ -2,9 +2,14 @@
 
 namespace App\View\Components;
 
+use App\Models\Parcel;
 use Closure;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
+
+
+
+
 
 class layout extends Component
 {
@@ -21,6 +26,7 @@ class layout extends Component
      */
     public function render(): View|Closure|string
     {
-        return view('components.layout');
+        $rt = Parcel::where('created_at', '<=', now()->subDays(3))->where('status','!=','Livré') ->whereNull('returned')->get();
+        return view('components.layout',compact('rt'));
     }
-}
+} 

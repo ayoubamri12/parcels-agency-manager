@@ -12,21 +12,24 @@
                 User </p>
         </div>
     </div>
-    <div class="nav">
+    <div class="nav active">
         <div class="menu">
             <p class="title">Main</p>
             <ul>
-                <li class="{{ request()->routeIs('home') ? 'mainMenu' : '' }}">
-                    <a href="{{ route('home') }}">
-                        <i class="icon ph-bold ph-house-simple"></i>
-                        <span class="text">Home</span>
-                    </a>
-                </li>
-
+                @auth
+                    @if (auth()->user()->type == 'admin')
+                        <li class="{{ request()->routeIs('home') ? 'mainMenu' : '' }}">
+                            <a href="{{ route('home') }}">
+                                <i class="icon ph-bold ph-house-simple"></i>
+                                <span class="text">Home</span>
+                            </a>
+                        </li>
+                    @endif
+                @endauth
                 <li class="{{ request()->is('Parcels/*') ? 'mainMenu' : '' }}">
                     <a href="#">
                         <i class="icon fa-solid fa-box"></i>
-                        <span class="text">Prarcels</span>
+                        <span class="text">Parcels</span>
                         <i class="arrow ph-bold ph-caret-down"></i>
                     </a>
                     <ul class="sub-menu">
@@ -48,38 +51,51 @@
                         </li>
                         @auth
                             @if (auth()->user()->type == 'admin')
-                        <li class="#">
-                            <a class="{{ request()->is('Parcels/companies/index') || request()->is('Parcels/companies/*')  ? 'sub-active' : '' }}"
-                                href="{{ route('companies') }}">
-                                <span class="text">> Per Client</span>
-                            </a>
-                        </li>
-                        @endif
+                                <li class="#">
+                                    <a class="{{ request()->is('Parcels/companies/index') || request()->is('Parcels/companies/*') ? 'sub-active' : '' }}"
+                                        href="{{ route('companies') }}">
+                                        <span class="text">> Per Client</span>
+                                    </a>
+                                </li>
+                            @endif
                         @endauth
-
+                        <li class="#">
+                            @auth
+                                @if (auth()->user()->type === 'admin')
+                                    <a class="{{ request()->is('Parcels/to_return') ? 'sub-active' : '' }}"
+                                        href="{{ route('parcels.return') }}">
+                                        <span class="text">>To be returnd <span
+                                                class="badge badge-danger">{{ $rt->count() }}</span></span>
+                                    </a>
+                                @endif
+                            @endauth
+                        </li>
                     </ul>
                 </li>
-
-                <li class="#">
+ @auth
+            @if (auth()->user()->type == 'admin')
+       
+                <li class="{{ request()->is('parcels/payement/*') ? 'mainMenu' : '' }}">
                     <a href="#">
-                        <i class="fas fa-file-invoice"></i>
-                        <span class="text">Bon de payement</span>
+                        <i class="fas fa-money-bill-wave"></i>
+                        <span class="text">Parcels payement</span>
                         <i class="arrow ph-bold ph-caret-down"></i>
                     </a>
                     <ul class="sub-menu">
                         <li class="#">
-                            <a class="#" href="#">
-                                <span class="text">> Pour Livereur</span>
+                            <a class="{{ request()->is('parcels/payement/to_pay') ? 'sub-active' : '' }}" href="{{route("parcels.notPayed")}}">
+                                <span class="text">> Not Payed</span>
                             </a>
                         </li>
                         <li class="#">
-                            <a href="#">
-                                <span class="text">> Pour Client</span>
+                            <a class="{{ request()->is('parcels/payement/payed') ? 'sub-active' : '' }}" href="{{route("parcels.payed")}}">
+                                <span class="text">> Payed</span>
                             </a>
                         </li>
-
                     </ul>
                 </li>
+                 @endif
+        @endauth
             </ul>
         </div>
         @auth
@@ -100,7 +116,6 @@
                             </a>
                         </li>
                     </ul>
-
                 </div>
             @endif
         @endauth

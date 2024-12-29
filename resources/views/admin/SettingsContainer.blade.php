@@ -1,7 +1,7 @@
 <link rel="stylesheet" href="{{ asset('assets/css/Settings.css') }}">
 
 <x-layout>
-    <div class="holder">
+    <div class="holder mt-3">
         <div id="loaderHolder" style="display: none" class="loading">
             <p class="loader"></p>
         </div>

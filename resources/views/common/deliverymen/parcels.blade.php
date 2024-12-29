@@ -253,6 +253,26 @@
             /* Adjust width as needed to show half */
         }
     }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        padding-right: calc(1.5em + 0.75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875em;
+        margin-top: 0.25rem;
+    }
+
+    .wd {
+
+        width: 90% !important;
+    }
 </style>
 <x-layout>
     <div id="cntr" class="mx-auto mt-5 pb-3" style="width: 100%;">
@@ -292,26 +312,52 @@
                 }, 5500);
             </script>
         @endif
-        <div class="modal fade" id="actionModal" tabindex="-1" aria-labelledby="actionModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+        <div class="modal fade" id="largeModal" tabindex="-1" aria-labelledby="largeModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg wd">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="actionModalLabel">Parcel Action</h5>
-                        <button type="button" class="btn-close btn btn-info" data-bs-dismiss="modal"
-                            aria-label="Close">
-                            <i class="fas fa-times"></i>
-                        </button>
+                        <h5 class="modal-title" id="largeModalLabel">Details Table</h5>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i
+                                class="fas fa-times"></i></button>
+
                     </div>
-                    <div class="modal-body" id="modalContent">
-                        <!-- Content injected here based on action type -->
+                    <div class="modal-body">
+                        <div class="table-responsive" style="height: 60vh; overflow-y: auto;">
+                            <table class="table table-striped table-hover" id="modalTable">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Code d'envoi</th>
+                                        <th>Nom du magasin</th>
+                                        <th>Destinataire</th>
+                                        <th>Date d'expédition</th>
+                                        <th>Téléphone</th>
+                                        <th>État</th>
+                                        <th>Status</th>
+                                        <th>Ville</th>
+                                        <th>Prix</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Table rows will go here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+
+
+                        </tbody>
+                        </table>
                     </div>
+
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary" onclick="submitAction()">Submit</button>
+                        <button type="button" id="reshipp"
+                            style="color: white;background-color:orange; cursor: pointer;"
+                            class="btn btn-primary">Reset</button>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <div id="loaderHolder" style="display: none" class="loading">
             <p class="loader"></p>
@@ -328,17 +374,23 @@
                     <option value="">Etat</option>
                     <option value="payé">Payé</option>
                     <option value="Non payé">Non payé</option>
-                    <option value="Facturé">Facturé</option>
+
                 </select>
             </div>
             <div class="col-md-3">
                 <select class="form-control" id="status-filter">
-                    <option value="">Statut</option>
-                    <option value="en cours">En cours</option>
-                    <option value="livré">Livré</option>
-                    <option value="Raporté">Raporté</option>
-                    <option value="Annulé">Annulé</option>
+                    <option value=''>STATUS</option>
+                    <option {{ auth()->user()->type !== 'admin' ? 'selected' : '' }} value="en cours de livraison">En
+                        cours</option>
+                    <option value="Livré">Livré</option>
+                    <option value="Reporté">Reporté</option>
                     <option value="Refusé">Refusé</option>
+                    <option value="Annulé">Annulé</option>
+                    <option value="En voyage">En voyage</option>
+                    <option value="Pas de reponse">Pas de reponse</option>
+                    <option value="Injoignable">Injoignable</option>
+                    <option value="Numéro Incorrect">Numéro Incorrect</option>
+                    <option value="Hors Zone">Hors Zone</option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -401,12 +453,12 @@
                             <div class="stat-item">
                                 <h5 style="color: rgb(9, 81, 75);"><i class="fas fa-box-open"></i> Returned Parcels
                                 </h5>
-                                <p id="returned" style="color: red;font-weight: bold;">$0.00</p>
+                                <p id="returned" style="color: red;font-weight: bold;">0 Parcel</p>
                             </div>
                             <div class="stat-item">
                                 <h5 style="color: rgb(245, 201, 80);"><i class="fas fa-ban"></i> Refused Parcels
                                 </h5>
-                                <p id="returned" style="color: red;font-weight: bold;">$0.00</p>
+                                <p id="refused" style="color: red;font-weight: bold;">0 Parcel</p>
                             </div>
                         </div>
 
@@ -418,10 +470,40 @@
 
         <div id="table-cntr"
             style="border-top:4px solid orange ;border-radius: 2px ; box-shadow: 0px 3px 3px rgb(175, 175, 175) ; background-color: white; padding: 5px; width: 95%; margin: auto;">
+            <div class="modal fade" id="actionModal" tabindex="-1" aria-labelledby="actionModalLabel"
+                aria-hidden="false">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="actionModalLabel">Parcel Action</h5>
+                            <button type="button" class="btn-close btn btn-info" data-bs-dismiss="modal"
+                                aria-label="Close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modalContent">
+                            <!-- Content injected here based on action type -->
+                        </div>
+
+                    </div>
+                </div>
+            </div>
             <div class="main-datatable table-responsive p-4">
                 @if (auth()->user()->type == 'admin')
-                    <div class="d-flex justify-content-end  my-1 mx-auto">
-                        <a href="{{ route('admin.addParcel',request()->id) }}" class="btn"
+                    <div class="d-flex justify-content-between my-1 mx-auto">
+                        <button class="btn btn-success" id="shippment"
+                            style="display:flex;justify-content: space-around; align-items:center;">
+                            <input type="checkbox" class="form-control p-2 w-25" id="delivered-today-filter"
+                                value=""> Delivered today
+                        </button>
+                        <input type="date" class="form-control w-25" id="delDate-filter"
+                            placeholder="Nom de Magasin" />
+                        <button type="button" class="btn" id="modalbtn"
+                            style="color: white;background-color: rgb(199, 158, 8); cursor: pointer;"
+                            data-bs-toggle="modal" data-bs-target="#largeModal">
+                            Parcels needs attention
+                        </button>
+                        <a href="{{ route('admin.addParcel', request()->id) }}" class="btn"
                             style="color: white;background-color: orange; cursor: pointer;">Add Parcels</a>
                         <button class="mx-3" id="return" style="display: none;">
                             <i class="fas fa-undo"></i>
@@ -479,7 +561,8 @@
 </x-layout>
 <script>
     window.Laravel = {
-        userId: @json(request()->id)
+        userId: @json(request()->id),
+        userType: @json(auth()->user()->type === 'admin')
     };
 </script>
 <script src="{{ asset('assets/js/deliverymen_parcels.js') }}"></script>
@@ -492,10 +575,13 @@
 
         if (action === 'details') {
             modalContent = `<p>Details for Parcel ID: ${parcel.id}</p>
+                            <p>Code: ${parcel.code}</p>
+                            <p>Magasin: ${parcel.company_name}</p>
+                            <p>Status: ${parcel.status}</p>
                             <p>Details Client: ${parcel.client_name}</p>
                            <p>Telephone : <a href="tel:${parcel.phone }">${parcel.phone }</a></p>
                         <p><i class="fab fa-whatsapp"></i> Whatsapp <a
-    href="https://api.whatsapp.com/send?phone=${parcel.phone.replace(/\D/g, '')}?text=${encodeURIComponent('Hello there!')}"
+    href="https://api.whatsapp.com/send?phone=212${parcel.phone.replace(/\D/g, '')}"
     target="_blank"
 >
     ${parcel.phone}
@@ -509,36 +595,44 @@
                             <p>Details Client: ${parcel.client_name}</p>
                                                 <p>Details Client Phone: ${parcel.phone}</p>        <p>Details Client Phone: ${parcel.phone}</p>
                             <p>Details Status: ${parcel.status}</p>
-      <form id="statusForm" action='/Parcels/update/${parcel.id}' method='post'>
+      <form id="statusForm" action='' method='post'>
         @csrf
         @method('put')
         <div class="mb-3">
           <label for="status" class="form-label">Status</label>
           <select id="status" name="status" class="form-control" required onchange="handleStatusChange()">
           <option value="">Select Status</option>
+          <option value="Livré">Livré</option>
             <option value="Reporté">Reporté</option>
             <option value="Refusé">Refusé</option>
             <option value="Annulé">Annulé</option>
             <option value="En voyage">En voyage</option>
             <option value="Pas de reponse">Pas de reponse</option>
-            <option value="Livré">Livré</option>
+            <option value="Injoignable">Injoignable</option>
+    <option value="Numéro Incorrect">Numéro Incorrect</option>
+    <option value="Hors Zone">Hors Zone</option>
           </select>
         </div>
         <div id="commentField" class="mb-3" style="display: none;">
           <label for="comment" class="form-label">Comment</label>
-          <textarea type="text" id="comment" name="comment" class="form-control" required>
-        </textarea>
+        <textarea type="text" value='' id="comment" name="comment" class="form-control" ></textarea>
+
+        <div id="cmt-error" class="invalid-feedback"></div>
+
         </div>
         <div id="dateField" class="mb-3" style="display: none;">
           <label for="date" class="form-label">Date</label>
-          <input type="date" id="date" name="date" class="form-control" required>
+          <input type="date" id="date" name="date" class="form-control" >
         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                                               <button type="button" onclick='save(${parcel.id})' class="btn btn-primary">Save</button>
+
 
       </form>
     `;
-        } else if (action === 'delete') {
-            modalContent = `<p>Are you sure you want to delete Parcel ID: ${parcel.id}?</p>`;
+
+        } else {
+            modalContent =
+                `<p>Sorry you are unabled from making changes on: <strong style='color:red;'>${parcel.code}</strong></p>`;
         }
 
         $('#modalContent').html(modalContent);
@@ -550,7 +644,7 @@
         const dateField = document.getElementById('dateField');
 
         // Show/hide comment and date fields based on selected status
-        if (status === 'Reporté' || status === 'Annulé' || status === 'Refusé') {
+        if (status === 'Reporté' || status === 'Annulé' || status === 'Refusé' || status === 'Hors zone') {
             commentField.style.display = 'block';
             commentField.querySelector('textarea').required = true;
         } else {
@@ -561,9 +655,124 @@
         if (status === 'Reporté') {
             dateField.style.display = 'block';
             dateField.querySelector('input').required = true;
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+
+            // Format the date to YYYY-MM-DD
+            const year = tomorrow.getFullYear();
+            const month = String(tomorrow.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+            const day = String(tomorrow.getDate()).padStart(2, '0');
+
+            const formattedDate = `${year}-${month}-${day}`;
+            dateField.querySelector('input').value = formattedDate;
         } else {
             dateField.style.display = 'none';
             dateField.querySelector('input').required = false;
         }
+    }
+
+    function save(e) {
+        const status = document.getElementById('status').value;
+        const commentField = document.getElementById('commentField').querySelector('textarea').value;
+        const dateField = document.getElementById('dateField').querySelector('input').value;
+        console.log("/Parcels/update/" + e);
+        if (!status) {
+            $('#status').addClass('is-invalid');
+            return
+        }
+        if (status === 'Annulé' || status === 'Refusé' || status === 'Hors zone') {
+            if ($("textarea#comment").val() == "") {
+                $('textarea#comment').addClass('is-invalid');
+                $('#cmt-error').text('Please enter comment.');
+                return
+            }
+        }
+        $.ajax({
+
+            url: `/Parcels/update/${e}`, // Replace with your API endpoint
+            method: 'put',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Add CSRF token for security
+            },
+            data: {
+                status,
+                comment: commentField || "",
+                date: dateField || ""
+            },
+            beforeSend: function() {
+                $('#loaderHolder').show(); // Show loader before the request
+            },
+            complete: function() {
+                $('#loaderHolder').hide(); // Hide loader after the request
+            },
+            success: function(response) {
+                // Reset form
+                $("#statusForm")[0].reset();
+                $('#actionModal').modal('hide')
+                // Reload table data
+                table.ajax.reload();
+                const toastContainer = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.classList.add('toast');
+
+                toast.innerHTML = ` 
+                <span class="icon" style='color:green;'><i class="fas fa-exclamation-circle"></i></span>
+                <div class="message">
+                    <strong style='color:green;'>Updated !</strong><br>
+                    the updating operation completed successfuly
+                </div>
+                <button class="close-btn" onclick="this.parentElement.remove()">×</button>`;
+
+                // Append Toast to Container
+                toastContainer.appendChild(toast);
+
+                // Remove Toast After 3.5 Seconds
+                setTimeout(() => {
+                    toast.remove();
+                }, 5500); // Automatically remove toast after 5.5 seconds
+
+            },
+            error: function(error) {
+                console.error('Error updating data:', error);
+
+                // Display error notification as a toast
+                const toastContainer = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.classList.add('toast');
+                toast.style.cssText = `
+            position: fixed; 
+            top: 10px; 
+            right: 10px; 
+            background-color: #ffe0e0; 
+            border-left: 5px solid red; 
+            padding: 10px; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif; 
+            border-radius: 5px; 
+            animation: fadeIn 0.5s, fadeOut 0.5s 5s forwards;
+        `;
+
+                toast.innerHTML = `
+            <span style="font-size: 20px; color: red; margin-right: 10px;">
+                <i class="fas fa-times-circle"></i>
+            </span>
+            <strong style="color: red;">Error!</strong>
+            <br>
+            Failed to update data. Please try again.
+            <button class="close-btn" style="float: right; background: none; border: none; color: #000; font-size: 18px; cursor: pointer;" 
+                onclick="this.parentElement.remove()">×</button>
+        `;
+
+                // Append toast to the container
+                toastContainer.appendChild(toast);
+
+                // Automatically remove toast after 5.5 seconds
+                setTimeout(() => {
+                    toast.remove();
+                }, 5500);
+            }
+        });
+
+        // $("#statusForm").submit()
     }
 </script>

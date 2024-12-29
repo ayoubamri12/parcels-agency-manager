@@ -219,7 +219,15 @@
                 // Hide skeleton and show content
                 skeleton.style.display = "none";
                 content.style.display = "block";
-                const barCtx = document.getElementById('barChart').getContext('2d');
+                return data
+            }).then(async (data)=>{
+         const localData = await fetch(`/api/parcelsLocal`)
+    .then(response => response.json());
+    let totale = 0
+    localData.map(e=>{
+        totale+=e.totale_d
+    })
+    const barCtx = document.getElementById('barChart').getContext('2d');
                 new Chart(barCtx, {
                     type: 'bar',
                     data: {
@@ -232,9 +240,9 @@
                         ],
                         datasets: [{
                             label: 'Count',
-                            data: [data.length,
+                            data: [data.length+totale,
                                 data.filter(e => e.status ===
-                                    "Livré").length,
+                                    "Livré").length+totale,
                                
                                 data.filter(e => e
                                     .etat === "Payé").length,
@@ -274,9 +282,9 @@
                             'RETURNED',
                         ],
                         datasets: [{
-                            data: [data.length,
+                            data: [data.length+totale,
                                 data.filter(e => e.status ===
-                                    "Livré").length,
+                                    "Livré").length+totale,
                                     data.filter(e => e
                                     .etat === "Payé").length,
                                     data.filter(e => e
@@ -296,7 +304,9 @@
                         responsive: true,
                     }
                 });
-            })
-
+    document.getElementById("colis-count").textContent=+document.getElementById("colis-count").textContent+totale
+     document.getElementById("bons-envoie-count").textContent= +document.getElementById("bons-envoie-count").textContent+totale
     });
+
+    })
 </script>

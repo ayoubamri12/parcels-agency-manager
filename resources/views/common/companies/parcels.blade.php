@@ -118,6 +118,7 @@
     .table-responsive {
         overflow-x: visible;
     }
+
     .toast-container {
         position: fixed;
         top: 20px;
@@ -252,13 +253,30 @@
             /* Adjust width as needed to show half */
         }
     }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        padding-right: calc(1.5em + 0.75rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.1875rem) center;
+        background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.875em;
+        margin-top: 0.25rem;
+    }
 </style>
 <x-layout>
     <div id="cntr" class="mx-auto mt-5 pb-3" style="width: 100%;">
         <nav aria-label="breadcrumb w-100">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route("companies")}}">  <i class="fas fa-building"></i> Companies</a></li>
-                <li class="breadcrumb-item active" aria-bs-current="page"><a href=""><i class="icon fa-solid fa-box"></i> Parcels</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('companies') }}"> <i class="fas fa-building"></i>
+                        Companies</a></li>
+                <li class="breadcrumb-item active" aria-bs-current="page"><a href=""><i
+                            class="icon fa-solid fa-box"></i> Parcels</a></li>
             </ol>
         </nav>
 
@@ -294,7 +312,8 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="actionModalLabel">Parcel Action</h5>
-                        <button type="button" class="btn-close btn btn-info" data-bs-dismiss="modal" aria-label="Close">
+                        <button type="button" class="btn-close btn btn-info" data-bs-dismiss="modal"
+                            aria-label="Close">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
@@ -328,24 +347,30 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <select class="form-control" id="status-filter">
-                    <option value="">Statut</option>
-                    <option value="en cours">En cours</option>
-                    <option value="livré">Livré</option>
-                    <option value="Raporté">Raporté</option>
-                    <option value="Annulé">Annulé</option>
-                    <option value="Refusé">Refusé</option>
+               <select class="form-control" id="status-filter">
+                     <option value="">Select Status</option>
+            <option value="Livré">Livré</option>
+              <option value="en cours de livraison">En
+                        cours</option>
+            <option value="Reporté">Reporté</option>
+            <option value="Refusé">Refusé</option>
+            <option value="Annulé">Annulé</option>
+            <option value="En voyage">En voyage</option>
+            <option value="Pas de reponse">Pas de reponse</option>
+            <option value="Injoignable">Injoignable</option>
+    <option value="Numéro Incorrect">Numéro Incorrect</option>
+    <option value="Hors Zone">Hors Zone</option>
                 </select>
             </div>
-           <div class="col-md-3 mt-1">
-            <select class="form-control" id="delivery-filter">
-                <option value="">Livreur</option>
-                @foreach ($delmens as $delmen)
-                    <option value="{{ $delmen->id }}">
-                        {{ $delmen->name }}</option>
-                @endforeach
-            </select>
-        </div>
+            <div class="col-md-3 mt-1">
+                <select class="form-control" id="delivery-filter">
+                    <option value="">Livreur</option>
+                    @foreach ($delmens as $delmen)
+                        <option value="{{ $delmen->id }}">
+                            {{ $delmen->name }}</option>
+                    @endforeach
+                </select>
+            </div>
             <div class="col-md-3 mt-1">
                 <input type="text" class="form-control" id="magasin-filter" placeholder="Nom de Magasin" />
             </div>
@@ -357,7 +382,7 @@
                     <span></span> <i class="fa fa-caret-down"></i>
                 </div>
             </div>
-            
+
 
             <div class="col-md-2 mt-1">
                 <button class="btn me-1" style="background-color: orange;" id="filter-btn"><i
@@ -384,22 +409,22 @@
                                 <h5 style="color: green;"><i class="fas fa-dollar-sign"></i> Total Revenue</h5>
                                 <p id="totalRevenue" style="color: red;font-weight: bold;">$0.00</p>
                             </div>
-                            @if(auth()->user()->type == 'admin')
+                            @if (auth()->user()->type == 'admin')
                                 <div class="stat-item">
                                     <h5 style="color: purple;"><i class="fas fa-coins"></i> Commision</h5>
                                     <p id="clearRevenue" style="color: red;font-weight: bold;">$0.00</p>
                                 </div>
                             @endif
-                          
+
                             <div class="stat-item">
                                 <h5 style="color: rgb(9, 81, 75);"><i class="fas fa-box-open"></i> Returned Parcels
                                 </h5>
-                                <p id="returned" style="color: red;font-weight: bold;">$0.00</p>
+                                <p id="returned" style="color: red;font-weight: bold;">0 Parcel</p>
                             </div>
                             <div class="stat-item">
                                 <h5 style="color: rgb(245, 201, 80);"><i class="fas fa-ban"></i> Refused Parcels
                                 </h5>
-                                <p id="returned" style="color: red;font-weight: bold;">$0.00</p>
+                                <p id="refused" style="color: red;font-weight: bold;">0 Parcel</p>
                             </div>
                         </div>
 
@@ -412,8 +437,11 @@
         <div id="table-cntr"
             style="border-top:4px solid orange ;border-radius: 2px ; box-shadow: 0px 3px 3px rgb(175, 175, 175) ; background-color: white; padding: 5px; width: 95%; margin: auto;">
             <div class="main-datatable table-responsive p-4">
-                <div class="d-flex justify-content-end  my-1 mx-auto">
-                    <a href="{{ route('admin.addParcel') }}" class="btn"
+                <div class="d-flex justify-content-between  my-1 mx-auto">
+                    <button class="btn btn-success" id="shippment" style="display:flex;justify-content: space-around; align-items:center;">
+                        <input type="checkbox" class="form-control p-2 w-25" id="delivered-today-filter" value=""> Delivered today
+                    </button>
+                    <a href="{{ route('admin.addParcel') }}" class="btn mx-3 d-block"
                         style="color: white;background-color: orange; cursor: pointer;">Add Parcels</a>
                     <button class="mx-3" id="return" style="display: none;">
                         <i class="fas fa-undo"></i>
@@ -504,28 +532,32 @@
           <select id="status" name="status" class="form-control" required onchange="handleStatusChange()">
             <option value="">Select Status</option>
             <option value="Reporté">Reporté</option>
+            <option value="Livré">Livré</option>
             <option value="Refusé">Refusé</option>
             <option value="Annulé">Annulé</option>
             <option value="En voyage">En voyage</option>
             <option value="Pas de reponse">Pas de reponse</option>
-            <option value="Livré">Livré</option>
+            <option value="Injoignable">Injoignable</option>
+    <option value="Numéro Incorrect">Numéro Incorrect</option>
+    <option value="Hors Zone">Hors Zone</option>
           </select>
         </div>
         <div id="commentField" class="mb-3" style="display: none;">
           <label for="comment" class="form-label">Comment</label>
-          <textarea type="text" id="comment" name="comment" class="form-control" required>
-        </textarea>
+        <textarea type="text" value='' id="comment" name="comment" class="form-control" ></textarea>
+
+        <div id="cmt-error" class="invalid-feedback"></div>
+
         </div>
         <div id="dateField" class="mb-3" style="display: none;">
           <label for="date" class="form-label">Date</label>
-          <input type="date" id="date" name="date" class="form-control" required>
+          <input type="date" id="date" name="date" class="form-control" >
         </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                                               <button type="button" onclick='save()' class="btn btn-primary">Save</button>
 
       </form>
     `;
-        } else if (action === 'delete') {
-            modalContent = `<p>Are you sure you want to delete Parcel ID: ${parcel.id}?</p>`;
+           
         }
 
         $('#modalContent').html(modalContent);
@@ -539,7 +571,6 @@
         // Show/hide comment and date fields based on selected status
         if (status === 'Reporté' || status === 'Annulé' || status === 'Refusé') {
             commentField.style.display = 'block';
-            commentField.querySelector('textarea').required = true;
         } else {
             commentField.style.display = 'none';
             commentField.querySelector('textarea').required = false;
@@ -548,9 +579,124 @@
         if (status === 'Reporté') {
             dateField.style.display = 'block';
             dateField.querySelector('input').required = true;
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+
+                // Format the date to YYYY-MM-DD
+                const year = tomorrow.getFullYear();
+                const month = String(tomorrow.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+                const day = String(tomorrow.getDate()).padStart(2, '0');
+
+                const formattedDate = `${year}-${month}-${day}`;
+                dateField.querySelector('input').value = formattedDate;
         } else {
             dateField.style.display = 'none';
             dateField.querySelector('input').required = false;
         }
+    }
+    function save(e) {
+        const status = document.getElementById('status').value;
+        const commentField = document.getElementById('commentField').value;
+        const dateField = document.getElementById('dateField').value;
+        console.log( "/Parcels/update/"+e);
+        if(!status){
+            $('#status').addClass('is-invalid');
+            return
+        }
+        if (status === 'Annulé' || status === 'Refusé') {
+            if ($("textarea#comment").val() == "") {
+                $('textarea#comment').addClass('is-invalid');
+                $('#cmt-error').text('Please enter comment.');
+                return
+            }
+        }
+        $.ajax({
+            
+    url: `/Parcels/update/${e}`, // Replace with your API endpoint
+    method: 'put',
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Add CSRF token for security
+    },
+    data: {
+        status,
+        comment: commentField || "",
+        date: dateField || ""
+    },
+    beforeSend: function() {
+        $('#loaderHolder').show(); // Show loader before the request
+    },
+    complete: function() {
+        $('#loaderHolder').hide(); // Hide loader after the request
+    },
+    success: function(response) {
+        // Reset form
+        $("#statusForm")[0].reset();
+        $('#actionModal').modal('hide')
+        // Reload table data
+        table.ajax.reload();
+        const toastContainer = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.classList.add('toast');
+
+                toast.innerHTML =` 
+                <span class="icon" style='color:green;'><i class="fas fa-exclamation-circle"></i></span>
+                <div class="message">
+                    <strong style='color:green;'>Updated !</strong><br>
+                    the updating operation completed successfuly
+                </div>
+                <button class="close-btn" onclick="this.parentElement.remove()">×</button>`
+            ;
+
+                // Append Toast to Container
+                toastContainer.appendChild(toast);
+
+                // Remove Toast After 3.5 Seconds
+                setTimeout(() => {
+                    toast.remove();
+                }, 5500);        // Automatically remove toast after 5.5 seconds
+       
+    },
+    error: function(error) {
+        console.error('Error updating data:', error);
+
+        // Display error notification as a toast
+        const toastContainer = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.classList.add('toast');
+        toast.style.cssText = `
+            position: fixed; 
+            top: 10px; 
+            right: 10px; 
+            background-color: #ffe0e0; 
+            border-left: 5px solid red; 
+            padding: 10px; 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            font-family: Arial, sans-serif; 
+            border-radius: 5px; 
+            animation: fadeIn 0.5s, fadeOut 0.5s 5s forwards;
+        `;
+
+        toast.innerHTML = `
+            <span style="font-size: 20px; color: red; margin-right: 10px;">
+                <i class="fas fa-times-circle"></i>
+            </span>
+            <strong style="color: red;">Error!</strong>
+            <br>
+            Failed to update data. Please try again.
+            <button class="close-btn" style="float: right; background: none; border: none; color: #000; font-size: 18px; cursor: pointer;" 
+                onclick="this.parentElement.remove()">×</button>
+        `;
+
+        // Append toast to the container
+        toastContainer.appendChild(toast);
+
+        // Automatically remove toast after 5.5 seconds
+        setTimeout(() => {
+            toast.remove();
+        }, 5500);
+    }
+});
+
+        // $("#statusForm").submit()
     }
 </script>

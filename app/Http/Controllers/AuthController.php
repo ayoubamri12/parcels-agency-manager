@@ -20,7 +20,10 @@ class AuthController extends Controller
         if (Auth::attempt($request->only('email', 'password'))) {
             $request->session()->regenerate();
             Session::put('id', auth()->user()->id);
-            return redirect()->route('deliverymen')->with('success', 'Logged in successfully!');
+            if(auth()->user()->type!=='admin'){
+                return to_route("deliverymen.parcels",auth()->user()->delivery->id);
+            }
+            return redirect()->route('home')->with('success', 'Logged in successfully!');
         }
 
         return back()->with(

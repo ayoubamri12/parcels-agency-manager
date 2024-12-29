@@ -1,9 +1,13 @@
 .holder {
     width: 98%;
-    margin: 20px auto;
+    margin:  auto;
     height: fit-content;
 }
-
+.tabs {
+    display: flex;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
 .password-cell {
     display: flex;
     align-items: center;
@@ -50,11 +54,7 @@ h1 {
 }
 
 /* Tabs */
-.tabs {
-    display: flex;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
+
 
 .tab-btn {
     width: 200px;
@@ -114,35 +114,33 @@ h1 {
 
 }
 
-.main-datatable .dataTable th:first-of-type,
+/* .main-datatable .dataTable th:first-of-type,
 .main-datatable .dataTable td:first-of-type {
     text-align: center;
     border: 2px solid #ddd !important;
     text-justify: center;
     padding: 10px 0;
 
-}
+} */
 
-.main-datatable .dataTable tr:nth-child(odd) {
+/* .main-datatable .dataTable tr:nth-child(odd) {
     background-color: #f2f2f2;
 }
 
 .main-datatable .dataTable tr:nth-child(even) {
     background-color: whitesmoke;
-}
+} */
 
-.main-datatable .dataTable th:not(:first-of-type),
+ /* .main-datatable .dataTable th:not(:first-of-type),
 .main-datatable .dataTable td:not(:first-of-type) {
     border: 2px solid #ddd !important;
-    /* Light gray border */
-    /* Rounded corners */
+   
     text-align: center;
     text-justify: center;
     font-weight: bold;
-    /* White background */
     width: 25%;
     padding: 10px 0;
-}
+}  */
 
 /* Pagination Buttons */
 /* .main-datatable .dataTable .paginate_button {
@@ -174,10 +172,10 @@ h1 {
     text-align: center !important;
 }
 
-/* .main-datatable .dataTable .paginate_button:hover {
+ .main-datatable .dataTable .paginate_button:hover {
     background-color: #ff8800 !important;
     color: white !important;
-} */
+} 
 
 /* Search Box */
 .main-datatable .dataTables_wrapper div.dataTables_filter {
@@ -197,7 +195,7 @@ h1 {
 }
 
 /* Table Header Styling */
-.main-datatable .dataTable thead th {
+/* .main-datatable .dataTable thead th {
     background-color: white !important;
 
     color: #333 !important;
@@ -205,7 +203,7 @@ h1 {
     font-weight: bold !important;
     text-align: left !important;
     padding: 20px 15px !important;
-}
+} */
 
 .actions button {
     border: none;
@@ -322,11 +320,13 @@ span.rotate {
 }
 
 /* Style for the dropdown container */
-.dropdown {
+.dropdown ,.dropdown-assign{
     position: relative;
     display: inline-block;
 }
-
+.dropdown-content.show{
+    display: block;
+}
 /* Style for the dropdown content */
 .dropdown-content {
     display: none;
@@ -355,6 +355,13 @@ span.rotate {
 
 @media (max-width: 800px) {
     .holder {
-        width: 80%;
+        width: 100%;
+        
+    }
+    .tabs {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
     }
 }

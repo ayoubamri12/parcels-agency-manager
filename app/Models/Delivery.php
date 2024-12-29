@@ -23,5 +23,9 @@ class Delivery extends Model
     {
         return $this->hasMany(Parcel::class, 'parcels', 'parcel_id', 'id');
     }
+    public function localParcels()
+    {
+        return $this->hasMany(Parcel::class, 'parcels', 'parcel_id', 'id');
+    }
    
 }
